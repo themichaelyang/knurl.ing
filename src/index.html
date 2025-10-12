@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title></title>
+  <meta name="description" content="">
+  <!-- <link rel="stylesheet" href="stylesheets/style.css"> -->
+   <style>
+   </style>
+</head>
+<body>
+  <div class="knurling-container">
+    <div class="knurling"></div>
+  </div>
+  <style>
+    .knurling-container {
+      --square-width: 10px;
+      --triangle-height: calc(var(--square-width) / sqrt(2));
+      --inner-width: 1000px;
+
+      position: relative;
+      /* Make container multiples of diagonal / sqrt(2) so triangles line up */
+      width: 100px;
+      height: 50px;
+      overflow: hidden;
+    }
+    .knurling {
+      padding: 0;
+      margin: 0;
+      width: var(--inner-width);
+      height: var(--inner-width);
+      background: conic-gradient(from 45deg, #FF6B6B 0deg 90deg, #4ECDC4 90deg 180deg, #95E1D3 180deg 270deg, #FFE66D 270deg 360deg);
+      background-repeat: repeat;
+
+      /* Some experiments */
+      /* background: linear-gradient(to right top, red 50%, transparent 50%),
+                linear-gradient(to right bottom, green 0%, green 50%, yellow 50%, yellow 100%); */
+      /* background: linear-gradient(to right top, red 50%, transparent 50%),
+                linear-gradient(to right bottom, green 50%, blue 50%); */
+                /* linear-gradient(to left top, blue 50%, transparent 50%); */
+      /* background: radial-gradient(10px at center, black, white); */
+      /* background: conic-gradient(
+        white 0deg, white 120deg,
+        grey 120deg, grey 240deg,
+        black 240deg, black 360deg
+      ); */
+      /* background: conic-gradient(
+        black 0deg, black 60deg,
+        white 60deg, white 180deg,
+        grey 180deg, grey 300deg,
+        black 300deg, black 360deg
+      ); */
+
+      /* background size is side of square = length of hypotenuse. Side of triangle is hypotenuse / sqrt(2) */
+      background-size: var(--square-width) var(--square-width);
+      transform: rotate(45deg) translate(calc(-0.5 * var(--inner-width) - var(--triangle-height), 0));
+    }
+  </style>
+
+  <!-- <script src="./index.ts"></script> -->
+</body>
+</html>
