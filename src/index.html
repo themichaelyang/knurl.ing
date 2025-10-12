@@ -6,14 +6,8 @@
   <title></title>
   <meta name="description" content="">
   <!-- <link rel="stylesheet" href="stylesheets/style.css"> -->
-   <style>
-   </style>
-</head>
-<body>
-  <h1 id="logo">
-    <div class="knurling-container"><div class="knurling"></div></div>KNURL.ING</h1>
-  </div>
-  <style>
+  <link rel="stylesheet" href="../static/routed-gothic/stylesheet.css">
+<style>
     @font-face {
       font-family: "iA Writer Duo";
       src: url("/static/fonts/iAWriterDuoS-Regular.woff2");
@@ -26,23 +20,30 @@
     }
 
     body {
-      font-family: "iA Writer Duo";
+      font-family: "Routed Gothic Wide";
       background-color: rgb(230, 230, 230);
-      color: rgb(45, 45, 45);
+      color: rgba(45, 45, 45, 0.8);
     }
 
     #logo {
       text-align: center;
+    }
+
+    #logo a {
+      font-size: 24px;
+      text-transform: uppercase;
+      font-family: "Routed Gothic Wide";
+      text-decoration: none;
       background-color: rgb(45, 45, 45);
       color: transparent;
       text-shadow: 0px 2px 3px rgba(255, 255, 255, 0.5);
-      /* -webkit-background-clip: text; */
-      /* -moz-background-clip: text; */
       background-clip: text;
       letter-spacing: 0.05em;
     }
+
     :root {
-      --square-width: 5px;
+      --square-width: 4px;
+      /* Knurling triangles are right isosceles embedded in squares. */
       --triangle-height: calc(var(--square-width) / sqrt(2));
 
       --container-height-triangles: 8;
@@ -51,29 +52,29 @@
       --container-height: calc(var(--container-height-triangles) * var(--triangle-height));
       --container-width: calc(var(--container-width-triangles) * var(--triangle-height));
 
-      /* Since we are rotation 45 degrees, we need to make a larger square */
+      /* Since we are rotating 45 degrees, we need to make a larger square */
       --inner-width: calc(var(--container-width) * sqrt(2) * 2);
       --inner-height: calc(var(--container-width) * sqrt(2) * 2);
     }
 
     @keyframes rotate {
-      from {margin-top: 0;}
-      to {margin-top: calc(var(--container-height) * -2);}
+      from {margin-top: calc(var(--container-height) * -2);}
+      to {margin-top: 0;}
     }
     .knurling-container {
-      margin-right: 0.25em;
+      margin: 0 calc(4 * var(--triangle-height));
       vertical-align: middle;
       display: inline-block;
       position: relative;
       top: -0.1em;
-      /* Make container multiples of diagonal / sqrt(2) so triangles line up */
+
       height: var(--container-height);
       width: var(--container-width);
+
       overflow: hidden;
       border-radius: calc(var(--triangle-height) / 2);
       border-right: calc(var(--triangle-height) / 2) solid grey;
       border-left: calc(var(--triangle-height) / 2) solid grey;
-      /* border: 1px solid red; */
     }
 
     .knurling-container::before {
@@ -84,75 +85,60 @@
       display: block;
       position: absolute;
       z-index: 1;
+      /* Metallic highlights */
       background: linear-gradient(
           to bottom,
           transparent 0%,
-          rgba(255, 255, 255, 0.5) 15%,
-          transparent 25%,
-          rgba(255, 255, 255, 0.2) 55%,
+          rgba(255, 255, 255, 0.5) 12%,
+          transparent 45%,
+          rgba(255, 255, 255, 0.3) 65%,
           rgba(0, 0, 0, 0.7) 100%
       );
     }
 
-  
-    /* .knurling-container-cap { */
-      /* position: absolute; */
-      /* height: var(--container-height); */
-      /* width: 40px; */
-      /* background-image: url("data:image/svg+xml,%3C%3Fxml version='1.0' encoding='UTF-8' standalone='no'%3F%3E%3C!-- Created with Inkscape (http://www.inkscape.org/) --%3E%3Csvg width='14.849402mm' height='23.090248mm' viewBox='0 0 14.849402 23.090248' version='1.1' id='svg1' xmlns='http://www.w3.org/2000/svg' xmlns:svg='http://www.w3.org/2000/svg'%3E%3Cdefs id='defs1' /%3E%3Cg id='layer1' transform='translate(-24.096451,-24.323776)'%3E%3Cellipse style='fill:%231a1a1a;stroke:%23000000;stroke-width:0.322022' id='path1' cx='31.521152' cy='35.868896' rx='7.2636895' ry='11.384111' /%3E%3C/g%3E%3C/svg%3E%0A"); */
-      /* mask-image: url("data:image/svg+xml,%3C%3Fxml version='1.0' encoding='UTF-8' standalone='no'%3F%3E%3C!-- Created with Inkscape (http://www.inkscape.org/) --%3E%3Csvg width='14.849402mm' height='23.090248mm' viewBox='0 0 14.849402 23.090248' version='1.1' id='svg1' xmlns='http://www.w3.org/2000/svg' xmlns:svg='http://www.w3.org/2000/svg'%3E%3Cdefs id='defs1' /%3E%3Cg id='layer1' transform='translate(-24.096451,-24.323776)'%3E%3Cellipse style='fill:%231a1a1a;stroke:%23000000;stroke-width:0.322022' id='path1' cx='31.521152' cy='35.868896' rx='7.2636895' ry='11.384111' /%3E%3C/g%3E%3C/svg%3E%0A"); */
-      /* background-color: rgb(101, 101, 101); */
-      /* display: block; */
-      /* background-size: contain; *
-      mask-size: contain;
-      mask-repeat: no-repeat;
-      /* background-repeat: no-repeat; */
-      /* z-index: 1; */
-    /* } */
-    
     .knurling {
-      /* --translate-x: calc(var(--inner-width) / var(--triangle-height)); */
-      /* --translate-x: calc(var(--container-width)); */
-      /* --translate-y: calc(var(--container-height)); */
-
       /* Width is always larger, so use the width */
-      /* --translate-x: calc(var(--container-width) * 1); */
-      /* --translate-y: calc(var(--container-width) * 0.5); */
       --translate-y: calc(var(--container-width) * -0.5);
       --translate-x: calc(var(--container-width) * 0.5);
-      
-      /* --translate-y: 0; */
-      /* --translate-x: 0; */
 
       padding: 0;
       width: var(--inner-width);
       height: var(--inner-height);
+      /* Solid quadrants for knurling */
       background: conic-gradient(
         from 45deg, 
         rgb(152, 152, 152) 0deg 90deg, 
-        rgb(103, 103, 103) 90deg 180deg, 
-        rgb(37, 37, 37) 180deg 270deg, 
+        rgb(123, 123, 123) 90deg 180deg, 
+        rgb(57, 57, 57) 180deg 270deg, 
         rgb(214, 214, 214) 270deg 360deg
       );
       background-repeat: repeat;
 
-      /* background size is side of square = length of hypotenuse. Side of triangle is hypotenuse / sqrt(2) */
+      /* Background size is side of square = length of hypotenuse. Side of triangle is hypotenuse / sqrt(2) */
       background-size: var(--square-width) var(--square-width);
-      /* transform: rotate(45deg); Aranslate(var(--translate-x), var(--translate-y)); */
       transform-origin: top left;
+      /* Rotate by 45 degrees so triangles point up */
       transform: translate(var(--translate-x), var(--translate-y)) rotate(45deg);
-      /* transform: rotate(45deg); */
     }
 
-    .knurling-container:hover .knurling {
+    #logo:hover .knurling {
       animation-name: rotate;
-      animation-duration: 2s;
+      animation-duration: 1.5s;
       animation-iteration-count: infinite;
       animation-timing-function: linear;
       /* animation-timing-function: ease-in-out; */
-      /* animation-direction: alternate; */
     }
   </style>
+</head>
+<body>
+  <h1 id="logo">
+    <a href="/"><div class="knurling-container"><div class="knurling"></div></div>knurl.ing</a>
+  </h1>
+  <nav>
+    <div>
+      Profile
+    </div>
+  </nav>
   <!-- <script src="./index.ts"></script> -->
 </body>
 </html>

@@ -1,0 +1,81 @@
+@font-face {
+    font-family: 'Routed Gothic Wide';
+    src: url('RoutedGothicWide.woff2') format('woff2'),
+        url('RoutedGothicWide.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Routed Gothic';
+    src: url('RoutedGothic.woff2') format('woff2'),
+        url('RoutedGothic.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Routed Gothic Wide';
+    src: url('RoutedGothicWide-Italic.woff2') format('woff2'),
+        url('RoutedGothicWide-Italic.woff') format('woff');
+    font-weight: normal;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Routed Gothic Narrow';
+    src: url('RoutedGothicNarrow-Italic.woff2') format('woff2'),
+        url('RoutedGothicNarrow-Italic.woff') format('woff');
+    font-weight: normal;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Routed Gothic Wide';
+    src: url('RoutedGothicWide-Half-Italic.woff2') format('woff2'),
+        url('RoutedGothicWide-Half-Italic.woff') format('woff');
+    font-weight: normal;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Routed Gothic';
+    src: url('RoutedGothic-Italic.woff2') format('woff2'),
+        url('RoutedGothic-Italic.woff') format('woff');
+    font-weight: normal;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Routed Gothic Narrow';
+    src: url('RoutedGothicNarrow-Half-Italic.woff2') format('woff2'),
+        url('RoutedGothicNarrow-Half-Italic.woff') format('woff');
+    font-weight: normal;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Routed Gothic';
+    src: url('RoutedGothic-Half-Italic.woff2') format('woff2'),
+        url('RoutedGothic-Half-Italic.woff') format('woff');
+    font-weight: normal;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Routed Gothic Narrow';
+    src: url('RoutedGothicNarrow.woff2') format('woff2'),
+        url('RoutedGothicNarrow.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
