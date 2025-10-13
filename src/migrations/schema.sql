@@ -28,10 +28,10 @@ create table if not exists session (
 -- Create link table (shared link data)
 create table if not exists link (
     id integer primary key autoincrement,
-    url text unique not null,
+    normalized_url text unique not null,
     -- Includes subdomains
-    host varchar(255),
-    tld varchar(255),
+    -- host varchar(255),
+    -- tld varchar(255),
     -- Root domain
     -- domain varchar(255),
     -- path varchar(255),
@@ -47,6 +47,7 @@ create table if not exists post (
     id integer primary key autoincrement,
     -- user_id integer not null,
     link_id integer not null,
+    url text not null,
     created_at datetime default current_timestamp,
     -- foreign key (user_id) references user(id) on delete cascade,
     foreign key (link_id) references link(id) on delete cascade

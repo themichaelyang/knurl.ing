@@ -1,20 +1,25 @@
 import { SQL } from "bun"
 
-type Post = {
-  id: number
+type PostWritable = {
   link_id: number
-  created_at: string
+  url: string 
 }
+
+export type Post = {
+  id: number
+  created_at: string
+} & PostWritable
+
 
 export class PostTable {
   constructor(private sql: SQL) {
     this.sql = sql
   }
 
-  async create(linkId: number): Promise<Post> {
+  async insert(post: PostWritable): Promise<Post> {
     return (await this.sql`
-      insert into post (link_id)
-      values (${linkId})
+      insert into post (link_id, url)
+      values (${post.link_id}, ${post.url})
       returning *
     `)[0]!
   }

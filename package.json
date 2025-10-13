@@ -10,6 +10,7 @@
   "private": true,
   "type": "module",
   "dependencies": {
+    "normalize-url": "^8.1.0",
     "zod": "^4.1.12"
   }
 }

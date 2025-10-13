@@ -1,11 +1,15 @@
 import { SQL } from "bun"
 
-type Link = {
-  id: number
-  url: string
-  host: string
-  tld: string
-}
+type LinkWritable = {
+  normalized_url: string
+  // host: string
+  // tld: string
+} 
+
+export type Link = {
+  id: number,
+  created_at: string
+} & LinkWritable
 
 type MaybeLink = Link | null
 
@@ -20,23 +24,34 @@ export class LinkTable {
     `)[0]
   }
 
-  async fromURL(url: string): Promise<MaybeLink> {
+  async fromURL(parsed: URL): Promise<MaybeLink> {
     return (await this.sql`
-      select * from link where url = ${url}
+      select * from link where normalized_url = ${parsed.href}
     `)[0]
   }
 
-  async createFromURL(parsed: URL): Promise<Link> {
-    return (await this.sql`
-      insert into link (url, host, tld) 
-      values (${parsed.href}, ${parsed.host}, ${parsed.hostname.split('.').pop()})
-      returning *
-    `)[0]!
+  async insertFromURL(parsed: URL): Promise<Link> {
+    return await this.insert({
+      normalized_url: parsed.href,
+      // host: parsed.host,
+      // tld: parsed.hostname.split('.').pop()!
+    })
   }
 
-  async getOrCreateFromURL(parsed: URL): Promise<Link> {
-    let link = await this.fromURL(parsed.href)
-    link ??= await this.createFromURL(parsed)
+  async insert(link: LinkWritable): Promise<Link> {
+    return (await this.sql`
+      insert into link (normalized_url) 
+      values (${link.normalized_url})
+      returning *
+    `)[0]!
+      // -- insert into link (url, normalized_url, host, tld) 
+      // -- values (${link.url}, ${link.normalized_url}, ${link.host}, ${link.tld})
+  }
+
+  async getOrInsertFromURL(parsed: URL): Promise<Link> {
+    let link = await this.fromURL(parsed)
+    // link ??= await this.insertFromURL(parsed, normalized_url)
+    link ??= await this.insertFromURL(parsed)
     return link
   }
 }
