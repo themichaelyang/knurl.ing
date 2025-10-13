@@ -26,17 +26,27 @@ export class API {
   static async getAllPosts() {
     return await this.getPostsByURL("*")
   }
+
+  static async getFeed() {
+    const response = await fetch("/api/feed")
+    return await response.json() as { feed: { url: string, blurb: string, username: string }[] }
+  }
 }
 
-export class HypermediaAPI {
-  static async all() {
-    const result = await API.getAllPosts()
+export class HypertextAPI {
+  static async feed() {
+    const result = await API.getFeed()
     console.log(result)
-    return render(result.posts.map(post => html`
-      <div>
-        <h2><a href=${post.url}>${post.url}</a></h2>
-        ${post.blurb ? html`<p class="blurb">${post.blurb}</p>` : null}
-      </div>
-    `))
+    return render(
+      html`<h2>Feed</h2>
+      <ul>
+        ${result.feed.map(post => html`
+          <li>
+            ${post.blurb ? html`${post.blurb}` : null} 
+            <a href=${post.url}>${post.url}</a> 
+           </li>
+        `)}
+      </ul>
+    `)
   }
 }

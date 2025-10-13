@@ -1,8 +1,7 @@
 /// <reference lib="dom" />
 
-import { HypermediaAPI } from "../api"
+import { HypertextAPI } from "../api"
 
 window.addEventListener("load", async () => {
-  const posts = await HypermediaAPI.all()
-  document.getElementById("posts")!.innerHTML = posts
+  document.getElementById("feed")!.innerHTML = await HypertextAPI.feed()
 })

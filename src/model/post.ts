@@ -34,7 +34,8 @@ export class PostTable {
 
   async getAll(): Promise<PostReadable[]> {
     return (await this.sql`
-      select * from post
+      select * from post 
+      order by created_at desc
     `)
   }
 }

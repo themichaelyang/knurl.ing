@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,8 +7,8 @@
   <title></title>
   <meta name="description" content="">
   <!-- <link rel="stylesheet" href="stylesheets/style.css"> -->
-  <link rel="stylesheet" href="./static/routed-gothic/stylesheet.css">
-<style>
+  <link rel="stylesheet" href="../static/routed-gothic/stylesheet.css">
+  <style>
     @font-face {
       font-family: "iA Writer Duo";
       src: url("/static/fonts/iAWriterDuoS-Regular.woff2");
@@ -30,7 +31,7 @@
     }
 
     #logo a {
-      font-size: 24px;
+      font-size: 28px;
       text-transform: uppercase;
       font-family: "Routed Gothic Wide";
       text-decoration: none;
@@ -42,7 +43,7 @@
     }
 
     :root {
-      --square-width: 4px;
+      --square-width: 5px;
       /* Knurling triangles are right isosceles embedded in squares. */
       --triangle-height: calc(var(--square-width) / sqrt(2));
 
@@ -134,15 +135,12 @@
   <h1 id="logo">
     <a href="/"><div class="knurling-container"><div class="knurling"></div></div>knurl.ing</a>
   </h1>
-  <nav>
-    <div>
-      Profile
-    </div>
-    <div>
-      Posts
-      <section id="posts"></section>
-    </div>
-  </nav>
-  <script src="./index.ts"></script>
+  <form id="add" >
+  <input type="url" name="url" placeholder="URL" />
+  <input type="text" name="blurb" placeholder="Blurb" />
+  <button type="submit">Add</button>
+</form>
+<div id="feed"></div>
+<script type="module" src="../index.ts"></script>
 </body>
 </html>

@@ -1,0 +1,143 @@
+import { html, type TemplateRenderable } from "../../template"
+
+export default  (children: TemplateRenderable) => html`
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title></title>
+  <meta name="description" content="">
+  <!-- <link rel="stylesheet" href="stylesheets/style.css"> -->
+  <link rel="stylesheet" href="../static/routed-gothic/stylesheet.css">
+  <style>
+    @font-face {
+      font-family: "iA Writer Duo";
+      src: url("/static/fonts/iAWriterDuoS-Regular.woff2");
+    }
+
+    @font-face {
+      font-family: "iA Writer Duo";
+      font-weight: bold;
+      src: url("/static/fonts/iAWriterDuoS-Bold.woff2");
+    }
+
+    body {
+      font-family: "Routed Gothic Wide";
+      background-color: rgb(230, 230, 230);
+      color: rgba(45, 45, 45, 0.8);
+    }
+
+    #logo {
+      text-align: center;
+    }
+
+    #logo a {
+      font-size: 28px;
+      text-transform: uppercase;
+      font-family: "Routed Gothic Wide";
+      text-decoration: none;
+      background-color: rgb(45, 45, 45);
+      color: transparent;
+      text-shadow: 0px 2px 3px rgba(255, 255, 255, 0.5);
+      background-clip: text;
+      letter-spacing: 0.05em;
+    }
+
+    :root {
+      --square-width: 5px;
+      /* Knurling triangles are right isosceles embedded in squares. */
+      --triangle-height: calc(var(--square-width) / sqrt(2));
+
+      --container-height-triangles: 8;
+      --container-width-triangles: 10;
+
+      --container-height: calc(var(--container-height-triangles) * var(--triangle-height));
+      --container-width: calc(var(--container-width-triangles) * var(--triangle-height));
+
+      /* Since we are rotating 45 degrees, we need to make a larger square */
+      --inner-width: calc(var(--container-width) * sqrt(2) * 2);
+      --inner-height: calc(var(--container-width) * sqrt(2) * 2);
+    }
+
+    @keyframes rotate {
+      from {margin-top: calc(var(--container-height) * -2);}
+      to {margin-top: 0;}
+    }
+    .knurling-container {
+      margin: 0 calc(4 * var(--triangle-height));
+      vertical-align: middle;
+      display: inline-block;
+      position: relative;
+      top: -0.1em;
+
+      height: var(--container-height);
+      width: var(--container-width);
+
+      overflow: hidden;
+      border-radius: calc(var(--triangle-height) / 2);
+      border-right: calc(var(--triangle-height) / 2) solid grey;
+      border-left: calc(var(--triangle-height) / 2) solid grey;
+    }
+
+    .knurling-container::before {
+      height: var(--container-height);
+      width: var(--container-width);
+
+      content: '';
+      display: block;
+      position: absolute;
+      z-index: 1;
+      /* Metallic highlights */
+      background: linear-gradient(
+          to bottom,
+          transparent 0%,
+          rgba(255, 255, 255, 0.5) 12%,
+          transparent 45%,
+          rgba(255, 255, 255, 0.3) 65%,
+          rgba(0, 0, 0, 0.7) 100%
+      );
+    }
+
+    .knurling {
+      /* Width is always larger, so use the width */
+      --translate-y: calc(var(--container-width) * -0.5);
+      --translate-x: calc(var(--container-width) * 0.5);
+
+      padding: 0;
+      width: var(--inner-width);
+      height: var(--inner-height);
+      /* Solid quadrants for knurling */
+      background: conic-gradient(
+        from 45deg, 
+        rgb(152, 152, 152) 0deg 90deg, 
+        rgb(123, 123, 123) 90deg 180deg, 
+        rgb(57, 57, 57) 180deg 270deg, 
+        rgb(214, 214, 214) 270deg 360deg
+      );
+      background-repeat: repeat;
+
+      /* Background size is side of square = length of hypotenuse. Side of triangle is hypotenuse / sqrt(2) */
+      background-size: var(--square-width) var(--square-width);
+      transform-origin: top left;
+      /* Rotate by 45 degrees so triangles point up */
+      transform: translate(var(--translate-x), var(--translate-y)) rotate(45deg);
+    }
+
+    #logo:hover .knurling {
+      animation-name: rotate;
+      animation-duration: 1.5s;
+      animation-iteration-count: infinite;
+      animation-timing-function: linear;
+      /* animation-timing-function: ease-in-out; */
+    }
+  </style>
+</head>
+<body>
+  <h1 id="logo">
+    <a href="/"><div class="knurling-container"><div class="knurling"></div></div>knurl.ing</a>
+  </h1>
+  ${children}
+</body>
+</html>
+`

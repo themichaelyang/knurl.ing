@@ -2,7 +2,7 @@ import { SQL, type BunRequest } from "bun"
 import { LinkTable, type LinkReadable } from './model/link'
 import { PostTable, type PostReadable } from './model/post'
 import normalizeUrl from 'normalize-url'
-import index from './client/index.html'
+import index from './client/pages/index.html'
 import * as zod from 'zod'
 import type { Config } from './config'
 
@@ -167,6 +167,17 @@ async function getLink(app: App, url: string) {
   return link
 }
 
+async function getFeed(app: App) {
+  const feed = await app.sql`
+    select p.url, p.blurb, u.username 
+    from post p
+    full outer join user u on p.user_id = u.id
+    order by p.created_at desc
+  `
+  console.log(feed)
+  return Response.json({ feed: feed })
+}
+
 class App {
   sql: SQL
   linkTable: LinkTable
@@ -205,6 +216,10 @@ class App {
         "/api/link": {
           GET: (req) => handleGetLinkFromURL(this, req)
         },
+
+        "/api/feed": {
+          GET: (req) => getFeed(this)
+        }
       },
       error(err) {
         console.error("Server error:", err)

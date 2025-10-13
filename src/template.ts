@@ -21,24 +21,22 @@ export function escape(string: string) {
 }
 
 const symbol: unique symbol = Symbol('Template')
-
 export class Template {
   private [symbol]: boolean = true
 
-  constructor(readonly __html: string) {
-    this[symbol] = true
-  }
+  constructor(readonly __html: string) {}
 
-  static isTemplate(v: unknown): v is Template {
+  static is(v: unknown): v is Template {
     return v instanceof Template && v[symbol]
   }
 
+  // TODO: could preserve indentation level as an option
   static html(strings: TemplateStringsArray, ...values: any[]): Template {
     const out = strings.reduce((acc, str, i) => {
       const v = values[i]
       if (v == null) return acc + str
-      if (Template.isTemplate(v)) return acc + str + v.__html
-      if (Array.isArray(v) && v.every(Template.isTemplate)) {
+      if (Template.is(v)) return acc + str + v.__html
+      if (Array.isArray(v) && v.every(Template.is)) {
         return acc + str + Template.convertTemplateArray(v)
       }
       return acc + str + escape(v)    // escape everything else
@@ -48,7 +46,7 @@ export class Template {
 
   static convertTemplateArray(v: Template[]): string {
     return v.map(x => {
-      if (Template.isTemplate(x)) return x.__html
+      if (Template.is(x)) return x.__html
       return escape(String(x ?? ''))
     }).join('')
   }
@@ -56,12 +54,18 @@ export class Template {
   render = () => this.__html
 
   static render(v: Template | Template[]): string {
-    if (Array.isArray(v) && v.every(Template.isTemplate)) {
+    if (Array.isArray(v) && v.every(Template.is)) {
       return Template.convertTemplateArray(v)
     } else {
       return v.render()
     }
   }
+}
+
+export type TemplateRenderable = Template | Template[] | string
+
+export function raw(html: string): Template {
+  return new Template(html)
 }
 
 export function html(strings: TemplateStringsArray, ...values: any[]): Template {
