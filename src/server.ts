@@ -1,7 +1,6 @@
-import LocalConfig from './config.dev'
 import { SQL, type BunRequest } from "bun"
-import { LinkTable, type Link } from './model/link'
-import { PostTable, type Post } from './model/post'
+import { LinkTable, type LinkReadable } from './model/link'
+import { PostTable, type PostReadable } from './model/post'
 import normalizeUrl from 'normalize-url'
 import index from './client/index.html'
 import * as zod from 'zod'
@@ -16,7 +15,7 @@ import type { Config } from './config'
 // const postTable = new PostTable(sql)
 
 // Protects against forgotten awaits
-function success(json: { [key: string]: Post[] | Post | Link | null }) {
+function success(json: { [key: string]: PostReadable[] | PostReadable | LinkReadable | null }) {
   return Response.json(json)
 }
 
@@ -142,7 +141,7 @@ async function getPostsWithURL(app: App, url: string) {
   if (!link) return success({ posts: [] })
 
   const posts = await app.postTable.fromLinkId(link.id)
-  return success({ posts: posts })
+  return success({ posts: posts, link: link })
 }
 
 async function handleGetLinkFromURL(app: App, req: BunRequest) {
@@ -186,7 +185,10 @@ class App {
   async start() {
     // Set up schema
     await this.sql.file('./src/migrations/schema.sql')
-    this.serve(this.config.server.port || 2000)
+
+    let port = this.config.server.port || 2000
+    this.serve(port)
+    console.log(`Serving: http://localhost:${port}`)
   }
 
   serve(port: number) {

@@ -6,12 +6,12 @@ type LinkWritable = {
   // tld: string
 } 
 
-export type Link = {
+export type LinkReadable = {
   id: number,
   created_at: string
 } & LinkWritable
 
-type MaybeLink = Link | null
+type MaybeLink = LinkReadable | null
 
 export class LinkTable {
   constructor(private sql: SQL) {
@@ -30,7 +30,7 @@ export class LinkTable {
     `)[0]
   }
 
-  async insertFromURL(parsed: URL): Promise<Link> {
+  async insertFromURL(parsed: URL): Promise<LinkReadable> {
     return await this.insert({
       normalized_url: parsed.href,
       // host: parsed.host,
@@ -38,7 +38,7 @@ export class LinkTable {
     })
   }
 
-  async insert(link: LinkWritable): Promise<Link> {
+  async insert(link: LinkWritable): Promise<LinkReadable> {
     return (await this.sql`
       insert into link (normalized_url) 
       values (${link.normalized_url})
@@ -48,7 +48,7 @@ export class LinkTable {
       // -- values (${link.url}, ${link.normalized_url}, ${link.host}, ${link.tld})
   }
 
-  async getOrInsertFromURL(parsed: URL): Promise<Link> {
+  async getOrInsertFromURL(parsed: URL): Promise<LinkReadable> {
     let link = await this.fromURL(parsed)
     // link ??= await this.insertFromURL(parsed, normalized_url)
     link ??= await this.insertFromURL(parsed)

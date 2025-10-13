@@ -1,8 +1,8 @@
-import { type Config } from "./config"
+import { type Config } from "./src/config"
 
 let LocalConfig: Config = {
   database: { 
-    path: 'sqlite://database.sqlite'
+    path: 'sqlite://dev.sqlite'
   },
   auth: {
     secret: 'your-secret-key-change-in-production'
