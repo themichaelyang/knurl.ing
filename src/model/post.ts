@@ -6,8 +6,6 @@ type Post = {
   created_at: string
 }
 
-type MaybePost = Post | null
-
 export class PostTable {
   constructor(private sql: SQL) {
     this.sql = sql
@@ -19,5 +17,11 @@ export class PostTable {
       values (${linkId})
       returning *
     `)[0]!
+  }
+
+  async fromLinkId(linkId: number): Promise<Post[] | null> {
+    return (await this.sql`
+      select * from post where post.link_id = ${linkId}
+    `)
   }
 }

@@ -25,7 +25,7 @@ async function validateSchema<T>(zodSchema: zod.ZodSchema<T>, req: BunRequest): 
   const result = zodSchema.safeParse(body)
 
   if (!result.success) {
-    return new Response(JSON.stringify({ error: 'Invalid API body' }), { status: 400 })
+    return Response.json({ message: 'Invalid API body' }, { status: 400 })
   }
 
   return result.data
@@ -38,7 +38,7 @@ class CreatePostHandler {
 
     // In theory, Zod should filter these, but maybe in the future we relax Zod to allow better errors.
     const parsed = URL.parse(data.url)
-    if (!parsed) return new Response(JSON.stringify({ error: 'Invalid URL in API body' }), { status: 400 })
+    if (!parsed) return Response.json({ message: 'Invalid URL in API body' }, { status: 400 })
 
     return parsed
   }
@@ -51,56 +51,35 @@ class CreatePostHandler {
     const link = await linkTable.getOrCreateFromURL(parsed)
     const post = await postTable.create(link.id)
 
-    return new Response(JSON.stringify({ post: post }))
+    return Response.json({ post: post })
   }
 }
 
 async function handleGetPost(postId: string, req: BunRequest) {
   const post = (await sql`select * from post where id = ${postId}`)[0]
-
-  return new Response(JSON.stringify({ post: post }))
+  return Response.json({ post: post })
 }
 
 async function handleGetLink(linkId: string, req: BunRequest) {
-  const link = linkTable.fromId(parseInt(linkId))
+  const link = await linkTable.fromId(parseInt(linkId))
 
-  return new Response(JSON.stringify({ link: link }))
-}
-
-async function handleGetLinkByURL(req: BunRequest) {
-  const data = await validateSchema(zod.object({url: zod.url()}), req)
-  if (data instanceof Response) {
-    return data
-  }
-
-  const link = linkTable.fromURL(data.url)
-  return new Response(JSON.stringify({ link: link }))
+  return Response.json({ link: link })
 }
 
 async function handleFindPosts(req: BunRequest) {
   const data = await validateSchema(zod.object({link_id: zod.number()}), req)
-  if (data instanceof Response) {
-    return data
-  }
+  if (data instanceof Response) return data
 
-  const posts = await sql`
-    select * from post where post.link_id = ${data.link_id}
-  `
-
-  return new Response(JSON.stringify({ posts: posts }))
+  const posts = postTable.fromLinkId(data.link_id)
+  return Response.json({ posts: posts })
 }
 
 async function handleGetLinkFromURL(req: BunRequest) {
   const data = await validateSchema(zod.object({url: zod.url()}), req)
-  if (data instanceof Response) {
-    return data
-  }
+  if (data instanceof Response) return data
 
-  const link = (await sql`
-    select * from link where link.url = ${data.url}
-  `)[0]
-
-  return new Response(JSON.stringify({ link: link }))
+  const link = linkTable.fromURL(data.url)
+  return Response.json({ link: link })
 }
 
 Bun.serve({

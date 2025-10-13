@@ -15,11 +15,15 @@ export class LinkTable {
   }
 
   async fromId(id: number): Promise<MaybeLink> {
-    return (await this.sql`select * from link where id = ${id}`)[0]
+    return (await this.sql`
+      select * from link where id = ${id}
+    `)[0]
   }
 
   async fromURL(url: string): Promise<MaybeLink> {
-    return (await this.sql`select * from link where url = ${url}`)[0]
+    return (await this.sql`
+      select * from link where url = ${url}
+    `)[0]
   }
 
   async createFromURL(parsed: URL): Promise<Link> {
