@@ -1,3 +1,7 @@
+*.sqlite
+*.prod.ts
+*.production.ts
+
 # dependencies (bun install)
 node_modules
 
