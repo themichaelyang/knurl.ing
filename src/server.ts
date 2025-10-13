@@ -3,16 +3,17 @@ import { SQL, type BunRequest } from "bun"
 import { LinkTable, type Link } from './model/link'
 import { PostTable, type Post } from './model/post'
 import normalizeUrl from 'normalize-url'
-import index from './index.html'
+import index from './client/index.html'
 import * as zod from 'zod'
+import type { Config } from './config'
 
-const sql = new SQL(LocalConfig.database.path)
+// const sql = new SQL(LocalConfig.database.path)
 
 // Initialize database schema
-await sql.file('./src/migrations/schema.sql')
+// await sql.file('./src/migrations/schema.sql')
 
-const linkTable = new LinkTable(sql)
-const postTable = new PostTable(sql)
+// const linkTable = new LinkTable(sql)
+// const postTable = new PostTable(sql)
 
 // Protects against forgotten awaits
 function success(json: { [key: string]: Post[] | Post | Link | null }) {
@@ -73,90 +74,143 @@ async function validateSchema<T>(zodSchema: zod.ZodSchema<T>, req: BunRequest): 
 }
 
 class CreatePostHandler {
-  static async validate(req: BunRequest) {
-    const data = await validateSchema(zod.object({url: zod.url()}), req)
+  constructor(public app: App) {}
+
+  static new(app: App) {
+    return new CreatePostHandler(app)
+  }
+
+  // TODO: validate user id matches logged in user
+  async validate(req: BunRequest) {
+    const data = await validateSchema(zod.object({
+      url: zod.url(), 
+      user_id: zod.number(), 
+      blurb: zod.string().optional()
+    }), req)
+
     if (data instanceof Response) return data
 
     // In theory, Zod should filter these, but maybe in the future we relax Zod to allow better errors.
-    const parsed = URL.parse(data.url)
-    if (!parsed) return Response.json({ message: 'Invalid URL in API body' }, { status: 400 })
+    const url = URL.parse(data.url)
+    if (!url) return Response.json({ message: 'Invalid URL in API body' }, { status: 400 })
 
-    return parsed
+    return { url, user_id: data.user_id, blurb: data.blurb }
   }
 
-  static async handle(req: BunRequest) {
-    let parsed = await this.validate(req)
-    if (parsed instanceof Response) return parsed
-  
-    const link = await getOrCreateLink(parsed.href)
-    const post = await postTable.insert({ link_id: link.id, url: parsed.href })
+  async handle(req: BunRequest) {
+    let data = await this.validate(req)
+    if (data instanceof Response) return data 
+
+    const link = await getOrCreateLink(this.app, data.url.href)
+    const post = await this.app.postTable.insert({
+      link_id: link.id, 
+      url: data.url.href, 
+      user_id: data.user_id, 
+      blurb: data.blurb ?? null
+    })
 
     return success({ post: post })
   }
 }
 
-async function handleGetPost(postId: string, req: BunRequest) {
-  const post = (await sql`select * from post where id = ${postId}`)[0]
+async function handleGetPost(app: App, postId: string, req: BunRequest) {
+  const post = (await app.sql`select * from post where id = ${postId}`)[0]
   return success({ post: post })
 }
 
-async function handlegetOrCreateLink(linkId: string, req: BunRequest) {
-  const link = await linkTable.fromId(parseInt(linkId))
-
-  return success({ link: link })
+// TODO: wrap handlers so they can return well typed responses
+async function handleFindPosts(app: App, req: BunRequest) {
+  let data = await validateSchema(zod.object({ url: zod.string() }), req)
+  if (data.url === '*') {
+    return getAllPosts(app)
+  }
+  else {
+    data = await validateSchema(zod.object({ url: zod.url() }), req)
+    if (data instanceof Response) return data
+    return getPostsWithURL(app, data.url)
+  }
 }
 
-async function handleFindPosts(req: BunRequest) {
-  const data = await validateSchema(zod.object({link_id: zod.number()}), req)
-  if (data instanceof Response) return data
-
-  const posts = await postTable.fromLinkId(data.link_id)
+// TODO: add pagination
+async function getAllPosts(app: App) {
+  const posts = await app.postTable.getAll()
   return success({ posts: posts })
 }
 
-async function handleGetLinkFromURL(req: BunRequest) {
+async function getPostsWithURL(app: App, url: string) {
+  const link = await getLink(app, url)
+  if (!link) return success({ posts: [] })
+
+  const posts = await app.postTable.fromLinkId(link.id)
+  return success({ posts: posts })
+}
+
+async function handleGetLinkFromURL(app: App, req: BunRequest) {
   const data = await validateSchema(zod.object({url: zod.url()}), req)
   if (data instanceof Response) return data
 
   // URL.parse also does some normalization, so we must always parse it...
-  const link = await getLink(data.url)
+  const link = await getLink(app, data.url)
   console.log(link)
   return success({ link: link })
 }
 
 // TODO: move these into the model?
-async function getOrCreateLink(url: string) {
+async function getOrCreateLink(app: App, url: string) {
   const normalized = normalizeURLForLink(url)
-  const link = await linkTable.getOrInsertFromURL(normalized)
+  const link = await app.linkTable.getOrInsertFromURL(normalized)
   return link
 }
 
-async function getLink(url: string) {
+async function getLink(app: App, url: string) {
   const normalized = normalizeURLForLink(url)
-  const link = await linkTable.fromURL(normalized)
+  const link = await app.linkTable.fromURL(normalized)
   return link
 }
 
-Bun.serve({
-  routes: {
-    "/": index,
-    "/api/post": {
-      POST: (req) => CreatePostHandler.handle(req),
-      GET: (req) => handleFindPosts(req)
-    },
-    "/api/post/:post_id": {
-      GET: (req) => handleGetPost(req.params.post_id, req)
-    },
-    "/api/link": {
-      GET: (req) => handleGetLinkFromURL(req)
-    },
-    // "/api/link/:link_id": {
-      // GET: (req) => handlegetOrCreateLink(req.params.link_id, req)
-    // }
-  },
-  error(err) {
-    console.error("Server error:", err);
-    return new Response("Something went wrong!", { status: 500 });
-  },
-  port: 2000
-})
+class App {
+  sql: SQL
+  linkTable: LinkTable
+  postTable: PostTable
+
+  constructor(public config: Config) {
+    this.sql = new SQL(this.config.database.path)
+    this.linkTable = new LinkTable(this.sql)
+    this.postTable = new PostTable(this.sql)
+  }
+
+  static new(config: Config) {
+    return new App(config)
+  }
+
+  async start() {
+    // Set up schema
+    await this.sql.file('./src/migrations/schema.sql')
+    this.serve(this.config.server.port || 2000)
+  }
+
+  serve(port: number) {
+    Bun.serve({
+      routes: {
+        "/": index,
+        "/api/post": {
+          POST: (req) => CreatePostHandler.new(this).handle(req),
+          GET: (req) => handleFindPosts(this, req)
+        },
+        "/api/post/:post_id": {
+          GET: (req) => handleGetPost(this, req.params.post_id, req)
+        },
+        "/api/link": {
+          GET: (req) => handleGetLinkFromURL(this, req)
+        },
+      },
+      error(err) {
+        console.error("Server error:", err)
+        return new Response("Something went wrong!", { status: 500 })
+      },
+      port: port
+    })
+  }
+}
+
+export default App

@@ -6,6 +6,9 @@ let LocalConfig: Config = {
   },
   auth: {
     secret: 'your-secret-key-change-in-production'
+  },
+  server: {
+    port: 2000
   }
 }
 

@@ -4,9 +4,10 @@ create table if not exists user (
     username varchar(50) unique not null,
     password_hash varchar(255) not null,
     email varchar(255) unique not null,
+    url varchar(255),
     created_at datetime default current_timestamp,
     updated_at datetime default current_timestamp
-);
+); 
 
 -- Create trigger to automatically update updated_at timestamp for user
 create trigger if not exists update_user_timestamp 
@@ -45,9 +46,10 @@ create table if not exists link (
 -- Append only log of shared links
 create table if not exists post (
     id integer primary key autoincrement,
-    -- user_id integer not null,
+    user_id integer not null,
     link_id integer not null,
     url text not null,
+    blurb text,
     created_at datetime default current_timestamp,
     -- foreign key (user_id) references user(id) on delete cascade,
     foreign key (link_id) references link(id) on delete cascade

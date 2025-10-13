@@ -4,5 +4,8 @@ export type Config = {
   },
   auth: {
     secret: string
+  },
+  server: {
+    port: number | undefined
   }
 }
