@@ -2,7 +2,10 @@ import { type Config } from "./config"
 
 let LocalConfig: Config = {
   database: { 
-    path: 'database.sqlite'
+    path: 'sqlite://database.sqlite'
+  },
+  auth: {
+    secret: 'your-secret-key-change-in-production'
   }
 }
 
