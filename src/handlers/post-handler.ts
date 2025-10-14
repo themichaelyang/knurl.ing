@@ -14,9 +14,9 @@ export class PostHandler {
 
   handle = (req: BunRequest) => {
     if (req.method == 'POST') {
-      this.handlePost(req)
+      return this.handlePost(req)
     } else if (req.method === 'GET') {
-      this.handleGet(req)
+      return this.handleGet(req)
     }
 
     return Response.json({ message: 'Not found' }, { status: 400 })
@@ -26,7 +26,8 @@ export class PostHandler {
     const data = await validateSchema(zod.object({
       url: zod.url(),
       blurb: zod.string().optional(),
-      user_id: zod.number()
+      user_id: zod.coerce.number(),
+      idempotency_key: zod.string()
     }), req)
 
     if (data instanceof Response) return data

@@ -5,7 +5,17 @@ import { html } from "../views/template"
 import { htmlResponse } from "./html-response"
 import * as actions from "../actions/all"
 import { LinkHandler } from "./link-handler"
-import { isLoggedIn } from "../auth/is-logged-in"
+import { getLoggedInUser } from "../auth/get-logged-in-user"
+
+let submitPostForm = (user_id: number) => html`
+  <form action="/post" method="POST">
+    <label>URL <input type="url" name="url" required /></label>
+    <label>Blurb <input type="text" name="blurb" /></label>
+    <input type="hidden" name="user_id" value="${user_id}" />
+    <input type="hidden" name="idempotency_key" value="${crypto.randomUUID()}" />
+    <button type="submit">Post</button>
+  </form>
+`
 
 export function displayPostMetadata(post: actions.DisplayPost) {
   return html`
@@ -39,9 +49,9 @@ export class IndexHandler {
   }
 
   handleGet = async (req: BunRequest) => {
-    let loggedIn = await isLoggedIn(this.app, req)
+    // TODO: automatically populate useful things in the template data?
+    let loggedInUser = await getLoggedInUser(this.app, req)
     const feed = await actions.getFeed(this.app)
-    console.log(loggedIn)
 
     // TODO: Could implement this as left floating inline boxes
     // so the links flow like text?
@@ -49,12 +59,13 @@ export class IndexHandler {
     return htmlResponse(
       base(
         html`
+          ${loggedInUser ? html`<h1>Post a link</h1>${submitPostForm(loggedInUser.id)}` : ''}
           <h1>Feed</h1>
           <ul class="feed">
             ${feed.length > 0 ? feed.map((post) => displayPost(post)) : html`<p>No posts found.</p>`}
           </ul>
           `,
-          loggedIn
+          loggedInUser ? loggedInUser.username : null
       ).render()
     )
   }

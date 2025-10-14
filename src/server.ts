@@ -46,7 +46,8 @@ class CreatePostHandlerAPI {
     const data = await validateSchema(zod.object({
       url: zod.url(), 
       user_id: zod.coerce.number(), 
-      blurb: zod.string().optional()
+      blurb: zod.string().optional(),
+      idempotency_key: zod.string()
     }), req)
 
     if (data instanceof Response) return data
@@ -55,7 +56,7 @@ class CreatePostHandlerAPI {
     const url = URL.parse(data.url)
     if (!url) return Response.json({ message: 'Invalid URL in API body' }, { status: 400 })
 
-    return { url, user_id: data.user_id, blurb: data.blurb }
+    return { url, user_id: data.user_id, blurb: data.blurb, idempotency_key: data.idempotency_key }
   }
 
   async handle(req: BunRequest) {
@@ -67,7 +68,8 @@ class CreatePostHandlerAPI {
       link_id: link.id, 
       url: data.url.href, 
       user_id: data.user_id, 
-      blurb: data.blurb ?? null
+      blurb: data.blurb ?? null,
+      idempotency_key: data.idempotency_key
     })
 
     return success({ post: post })
@@ -178,6 +180,8 @@ class App {
         "/post": (req) => PostHandler.new(this).handle(req),
         // Don't forget to update LinkRouteHandler.route if you change this
         "/link/:id": (req) => LinkHandler.new(this).handle(req, req.params.id),
+        // TODO: add user handler, use username not id
+        // "/user/:username": (req) => UserHandler.new(this).handle(req, req.params.username),
         ...staticRoutes
       },
       error(err) {

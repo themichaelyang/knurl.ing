@@ -22,9 +22,15 @@ export class UserTable {
     this.sql = sql
   }
 
-  async getByUsername(username: string): Promise<UserReadable | null> {
+  async fromUsername(username: string): Promise<UserReadable | null> {
     return (await this.sql`
       select * from user where user.username = ${username}
+    `)[0]
+  }
+
+  async fromId(id: number): Promise<UserReadable | null> {
+    return (await this.sql`
+      select * from user where user.id = ${id}
     `)[0]
   }
 

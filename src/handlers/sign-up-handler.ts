@@ -46,7 +46,7 @@ export class SignUpHandler {
 
     const { username, password } = parsed.data
 
-    let existingUser = await this.app.userTable.getByUsername(username)
+    let existingUser = await this.app.userTable.fromUsername(username)
 
     if (existingUser) {
       // TODO: update page instead of responding with HTML

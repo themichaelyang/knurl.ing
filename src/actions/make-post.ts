@@ -4,6 +4,7 @@ import * as utils from "./utils"
 type makePostData = {
   url: URL,
   user_id: number,
+  idempotency_key: string,
   blurb?: string
 }
 
@@ -31,7 +32,8 @@ export async function makePost(app: App, data: makePostData) {
     link_id: link.id, 
     url: data.url.href, 
     user_id: data.user_id, 
-    blurb: data.blurb ?? null
+    idempotency_key: data.idempotency_key,
+    blurb: data.blurb ?? null,
   })
   return { post, link }
 }

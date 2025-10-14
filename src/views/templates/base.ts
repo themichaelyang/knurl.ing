@@ -1,10 +1,13 @@
 import { LoginHandler } from "../../handlers/login-handler"
 import { SignUpHandler } from "../../handlers/sign-up-handler"
-import { html, type TemplateRenderable } from "../template"
+import { html, type Template, type TemplateRenderable } from "../template"
 
 let signupAndLogin = html`<li><a href="${SignUpHandler.route}">Sign Up</a></li><li><a href="${LoginHandler.route}">Login</a></li>`
 
-export default (children: TemplateRenderable, loggedIn: boolean = false) => html`
+export default function base(children: TemplateRenderable, username: string | null = null): Template {
+  let loggedIn = username !== null
+
+  return html`
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -26,7 +29,7 @@ export default (children: TemplateRenderable, loggedIn: boolean = false) => html
       margin: 0 auto;
     }
 
-    .feed, .activities, .top-nav {
+    .feed, .activities, #top-nav {
       list-style-type: none;
       padding: 0;
     }
@@ -181,12 +184,12 @@ export default (children: TemplateRenderable, loggedIn: boolean = false) => html
   <h1 id="logo">
     <a href="/"><div class="knurling-container"><div class="knurling"></div></div>knurl.ing</a>
   </h1>
-  <nav>
-    <ul class="top-nav">
-      ${loggedIn ? html`<li><a href="/logout">Logout</a></li>` : signupAndLogin}
-    </ul>
+  <nav id="top-nav">
+    ${loggedIn ? html`<li>Logged in as <a href="/user/${username}">${username}</a></li>
+      <li><a href="/logout">Logout</a></li>` : signupAndLogin}
   </nav>
   ${children}
 </body>
 </html>
 `
+}

@@ -5,6 +5,7 @@ export type PostWritable = {
   url: string
   user_id: number
   blurb: string | null
+  idempotency_key: string | null
 }
 
 export type PostReadable = {
@@ -20,8 +21,8 @@ export class PostTable {
 
   async insert(post: PostWritable): Promise<PostReadable> {
     return (await this.sql`
-      insert into post (link_id, url, user_id, blurb)
-      values (${post.link_id}, ${post.url}, ${post.user_id}, ${post.blurb})
+      insert into post (link_id, url, user_id, blurb, idempotency_key)
+      values (${post.link_id}, ${post.url}, ${post.user_id}, ${post.blurb}, ${post.idempotency_key})
       returning *
     `)[0]!
   }

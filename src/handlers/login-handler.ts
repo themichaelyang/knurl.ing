@@ -48,7 +48,7 @@ export class LoginHandler {
     const { username, password } = parsed.data
 
     console.log(this)
-    let existingUser = await this.app.userTable.getByUsername(username)
+    let existingUser = await this.app.userTable.fromUsername(username)
 
     // TODO: update page instead of responding with HTML
     if (!existingUser) {

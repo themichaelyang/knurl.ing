@@ -46,6 +46,7 @@ create table if not exists link (
 -- Append only log of shared links
 create table if not exists post (
     id integer primary key autoincrement,
+    idempotency_key text not null unique,
     user_id integer not null,
     link_id integer not null,
     url text not null,
