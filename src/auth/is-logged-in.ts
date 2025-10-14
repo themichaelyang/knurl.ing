@@ -1,6 +1,7 @@
 import type App from "../server"
 import type { BunRequest } from "bun"
 
+// TODO: add better way of handling logged in or out at route handler level
 export async function isLoggedIn(app: App, req: BunRequest) {
   let sessionCookie = req.cookies.get("session")
   if (sessionCookie === null) return false
