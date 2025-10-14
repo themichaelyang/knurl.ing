@@ -24,7 +24,7 @@ const symbol: unique symbol = Symbol('Template')
 export class Template {
   private [symbol]: boolean = true
 
-  constructor(readonly __html: string) {}
+  constructor(readonly _html: string) {}
 
   static is(v: unknown): v is Template {
     return v instanceof Template && v[symbol]
@@ -35,7 +35,7 @@ export class Template {
     const out = strings.reduce((acc, str, i) => {
       const v = values[i]
       if (v == null) return acc + str
-      if (Template.is(v)) return acc + str + v.__html
+      if (Template.is(v)) return acc + str + v._html
       if (Array.isArray(v) && v.every(Template.is)) {
         return acc + str + Template.convertTemplateArray(v)
       }
@@ -46,12 +46,12 @@ export class Template {
 
   static convertTemplateArray(v: Template[]): string {
     return v.map(x => {
-      if (Template.is(x)) return x.__html
+      if (Template.is(x)) return x._html
       return escape(String(x ?? ''))
     }).join('')
   }
   
-  render = () => this.__html
+  render = () => this._html
 
   static render(v: Template | Template[]): string {
     if (Array.isArray(v) && v.every(Template.is)) {

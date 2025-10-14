@@ -13,6 +13,7 @@ export type LinkReadable = {
 
 type MaybeLink = LinkReadable | null
 
+// Models represent low level database data
 export class LinkTable {
   constructor(private sql: SQL) {
     this.sql = sql

@@ -1,6 +1,7 @@
-<form id="add" >
+<form id="add" action="/api/post" method="POST">
   <input type="url" name="url" placeholder="URL" />
   <input type="text" name="blurb" placeholder="Blurb" />
+  <input type="text" name="user_id" value="1" />
   <button type="submit">Add</button>
 </form>
 <div id="feed"></div>

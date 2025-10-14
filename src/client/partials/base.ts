@@ -1,6 +1,6 @@
 import { html, type TemplateRenderable } from "../../template"
 
-export default  (children: TemplateRenderable) => html`
+export default (children: TemplateRenderable) => html`
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -13,13 +13,13 @@ export default  (children: TemplateRenderable) => html`
   <style>
     @font-face {
       font-family: "iA Writer Duo";
-      src: url("/static/fonts/iAWriterDuoS-Regular.woff2");
+      src: url("../static/fonts/iAWriterDuoS-Regular.woff2");
     }
 
     @font-face {
       font-family: "iA Writer Duo";
       font-weight: bold;
-      src: url("/static/fonts/iAWriterDuoS-Bold.woff2");
+      src: url("../static/fonts/iAWriterDuoS-Bold.woff2");
     }
 
     body {

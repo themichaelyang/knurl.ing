@@ -1,6 +1,6 @@
-import { type PostWritable, type PostReadable } from "./model/post"
-import { type LinkReadable } from "./model/link"
-import { html, render } from "./template"
+import { type PostWritable, type PostReadable } from "../models/post"
+import { type LinkReadable } from "../models/link"
+import { html, render } from "../template"
 
 // TODO: convert to awesome HATEOS API...
 export class API {

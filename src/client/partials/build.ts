@@ -3,6 +3,7 @@ import { html, render, raw } from "../../template"
 
 import { watch } from "fs"
 
+// TODO: Replace with eta or other templating engines?
 const files = {
   "index-body.html": "index.html",
 }

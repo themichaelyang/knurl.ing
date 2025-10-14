@@ -1,11 +1,11 @@
 import { SQL, type BunRequest } from "bun"
-import { LinkTable, type LinkReadable } from './model/link'
-import { PostTable, type PostReadable } from './model/post'
+import { LinkTable, type LinkReadable } from './models/link.ts'
+import { PostTable, type PostReadable } from './models/post.ts'
 import normalizeUrl from 'normalize-url'
 import index from './client/pages/index.html'
 import * as zod from 'zod'
 import type { Config } from './config'
-
+import { SubmitPostRoute }from './submit-post.ts'
 // const sql = new SQL(LocalConfig.database.path)
 
 // Initialize database schema
@@ -41,22 +41,28 @@ function normalizeURLForLink(url: string) {
 
 async function validateSchema<T>(zodSchema: zod.ZodSchema<T>, req: BunRequest): Promise<T | Response> {
   // Untyped, but returns an Object: https://developer.mozilla.org/en-US/docs/Web/API/Request/json#return_value
-  let text = await req.text()
   let searchParams = URL.parse(req.url)?.searchParams
   let body = {}
 
-  if (text != '') {
-    body = JSON.parse(text)
+  if (req.headers.get('content-type') === 'application/x-www-form-urlencoded') {
+    body = Object.fromEntries((await req.formData()).entries())
   }
-  else if (searchParams) {
-    let searchParamsBody = Object.fromEntries(searchParams.entries())
-    if (Object.keys(searchParamsBody).length > 0) {
-      body = searchParamsBody
+  else if (req.headers.get('content-type') === 'application/json') {
+    let text = await req.text()
+    if (text != '') {
+      body = JSON.parse(text)
+    }
+    else if (searchParams) {
+      let searchParamsBody = Object.fromEntries(searchParams.entries())
+      if (Object.keys(searchParamsBody).length > 0) {
+        body = searchParamsBody
+      }
     }
   }
   // Allow both search params in URL and JSON body
   // `fetch()` in browser forbids data in body on GET requests
-  console.log(searchParams)
+  console.log(req.url)
+  console.log(req.method)
   console.log(body)
 
   // This is form data in body:
@@ -72,18 +78,18 @@ async function validateSchema<T>(zodSchema: zod.ZodSchema<T>, req: BunRequest): 
   return result.data
 }
 
-class CreatePostHandler {
+class CreatePostHandlerAPI {
   constructor(public app: App) {}
 
   static new(app: App) {
-    return new CreatePostHandler(app)
+    return new CreatePostHandlerAPI(app)
   }
 
   // TODO: validate user id matches logged in user
   async validate(req: BunRequest) {
     const data = await validateSchema(zod.object({
       url: zod.url(), 
-      user_id: zod.number(), 
+      user_id: zod.coerce.number(), 
       blurb: zod.string().optional()
     }), req)
 
@@ -174,7 +180,6 @@ async function getFeed(app: App) {
     full outer join user u on p.user_id = u.id
     order by p.created_at desc
   `
-  console.log(feed)
   return Response.json({ feed: feed })
 }
 
@@ -206,8 +211,10 @@ class App {
     Bun.serve({
       routes: {
         "/": index,
+        "/post": (req) => SubmitPostRoute.new(this).handle(req),
+
         "/api/post": {
-          POST: (req) => CreatePostHandler.new(this).handle(req),
+          POST: (req) => CreatePostHandlerAPI.new(this).handle(req),
           GET: (req) => handleFindPosts(this, req)
         },
         "/api/post/:post_id": {
