@@ -40,7 +40,7 @@ export class IndexRouteHandler {
     return new this(app)
   }
 
-  async handleGet(req: BunRequest) {
+  handleGet = async (req: BunRequest) => {
     let loggedIn = await isLoggedIn(this.app, req)
     const feed = await actions.getFeed(this.app)
     console.log(loggedIn)

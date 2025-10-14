@@ -16,7 +16,7 @@ export class LoginRouteHandler {
   static route = "/login"
 
   // Render login form
-  async handleGet(req: BunRequest) {
+  handleGet = async (req: BunRequest) => {
     return htmlResponse(
       base(html`
         <h1>Login</h1>
@@ -29,7 +29,9 @@ export class LoginRouteHandler {
     )
   }
 
-  async handlePost(req: BunRequest) {
+  // Unfortunately, we need to use arrow functions to preserve "this"
+  // when method is passed through the login redirect as a function
+  handlePost = async (req: BunRequest) => {
     const form = await req.formData()
     const body = Object.fromEntries(form.entries())
 
@@ -45,6 +47,7 @@ export class LoginRouteHandler {
 
     const { username, password } = parsed.data
 
+    console.log(this)
     let existingUser = await this.app.userTable.getByUsername(username)
 
     // TODO: update page instead of responding with HTML

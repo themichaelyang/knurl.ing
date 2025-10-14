@@ -14,7 +14,7 @@ export class LinkRouteHandler {
   // TODO: think of a better way to do this...
   static route = (id: string) => `/link/${id}`
 
-  async handle(req: BunRequest, linkIdStr: string) {
+  handle = async (req: BunRequest, linkIdStr: string) => {
     const linkId = parseInt(linkIdStr)
 
     if (!Number.isInteger(linkId)) {

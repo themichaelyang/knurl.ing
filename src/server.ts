@@ -15,6 +15,7 @@ import { UserTable } from "./models/user.ts"
 import { SessionTable } from "./models/session.ts"
 import { LoginRouteHandler } from "./handlers/login-route-handler.ts"
 import { redirectIfLoggedIn } from "./auth/redirect-if-logged-in.ts"
+import { LogoutRouteHandler } from "./handlers/logout-route-handler.ts"
 // const sql = new SQL(LocalConfig.database.path)
 
 // Initialize database schema
@@ -173,6 +174,7 @@ class App {
           GET: (req) => redirectIfLoggedIn(this, req, "/", SignUpRouteHandler.new(this).handleGet),
           POST: (req) => redirectIfLoggedIn(this, req, "/", SignUpRouteHandler.new(this).handlePost)
         },
+        "/logout": (req) => LogoutRouteHandler.new(this).handle(req),
         "/post": (req) => PostRouteHandler.new(this).handle(req),
         // Don't forget to update LinkRouteHandler.route if you change this
         "/link/:id": (req) => LinkRouteHandler.new(this).handle(req, req.params.id),

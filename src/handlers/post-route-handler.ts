@@ -9,7 +9,7 @@ export class PostRouteHandler {
 
   static new = (app: App) => new this(app)
 
-  handle(req: BunRequest) {
+  handle = (req: BunRequest) => {
     if (req.method == 'POST') {
       this.handlePost(req)
     } else if (req.method === 'GET') {
@@ -19,7 +19,7 @@ export class PostRouteHandler {
     return Response.json({ message: 'Not found' }, { status: 400 })
   }
 
-  async handlePost(req: BunRequest) {
+  handlePost = async (req: BunRequest) => {
     const data = await validateSchema(zod.object({
       url: zod.url(),
       blurb: zod.string().optional(),

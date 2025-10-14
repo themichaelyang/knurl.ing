@@ -17,12 +17,19 @@ export class SessionTable {
     this.sql = sql
   }
 
-  async insert(session: SessionWritable): Promise<SessionReadable> {
+  async delete(id: string): Promise<SessionReadable | null> {
+    return (await this.sql`
+      delete from session where session.id = ${id}
+      returning *
+    `)[0]
+  }
+
+  async insert(session: SessionWritable): Promise<SessionReadable | null> {
     return (await this.sql`
       insert into session (id, user_id, expires_at)
       values (${session.id}, ${session.user_id}, ${session.expires_at})
       returning *
-    `)[0]!
+    `)[0]
   }
 
   async fromId(id: string): Promise<SessionReadable | null> {

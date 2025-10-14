@@ -16,7 +16,7 @@ export class SignUpRouteHandler {
   static route = "/sign-up"
 
   // Render signup form
-  async handleGet(req: BunRequest) {
+  handleGet = async (req: BunRequest) => {
     return htmlResponse(
       base(html`
         <h1>Sign up</h1>
@@ -30,7 +30,7 @@ export class SignUpRouteHandler {
   }
 
   // Handle signup POST
-  async handlePost(req: BunRequest) {
+  handlePost = async (req: BunRequest) => {
     const form = await req.formData()
     const body = Object.fromEntries(form.entries())
 
