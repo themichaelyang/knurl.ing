@@ -8,31 +8,28 @@ import { htmlResponse } from "./html-response.ts"
 import * as actions from "../actions/all.ts"
 import { LinkRouteHandler } from "./link-route-handler"
 
+export function displayPostMetadata(post: actions.DisplayPost) {
+  return html`
+    <span class="activity-byline">
+      ${post.blurb ? "“" + post.blurb + "” — " : "posted by "}
+      <a class="activity-username" href="TODO: Link to user page">${post.username}</a>
+    </span>
+  `
+}
 // TODO link to user page
 // Need to wrap the links in divs to prevent them taking up entire width of grid
-function renderFeedItem(feedItem: actions.DisplayPost) {
+export function displayPost(post: actions.DisplayPost) {
   return html`
     <li> 
       <div class="display-post">
-        <div><a class="display-post-url" href="${feedItem.url}">${feedItem.url}</a></div>
+        <div><a class="display-post-url" href="${post.url}">${post.url}</a></div>
         <div class="display-post-metadata">
-          <div><a class="display-post-activity-href" href="${LinkRouteHandler.route(feedItem.link_id.toString())}">(see activity)</a></div>
-          <span class="display-post-byline">
-            ${feedItem.blurb ? "“" + feedItem.blurb + "” — " : ""}
-            <a class="display-post-username-link" href="TODO: Link to user page">${feedItem.username}</a>
-          </span>
+        <div><a class="activity-href" href="${LinkRouteHandler.route(post.link_id.toString())}">(see activity)</a></div>
+          ${displayPostMetadata(post)}
         </div>
       </div>
     </li>
   `
-  // `  <!-- <li> 
-  //     <div class="display-post">
-  //     <span>${feedItem.username}: ${feedItem.blurb ? "“" + feedItem.blurb + "” " : ""}</span>
-  //     <a href="${LinkRouteHandler.route(feedItem.link_id.toString())}">(activity)</a><br>
-  //     <a href="${feedItem.url}">${feedItem.url}</a>
-  //     </div>
-  //   </li> -->
-  // `
 }
 
 export class IndexRouteHandler {
@@ -45,12 +42,15 @@ export class IndexRouteHandler {
   async handleGet(req: BunRequest) {
     const feed = await actions.getFeed(this.app)
 
+    // TODO: Could implement this as left floating inline boxes
+    // so the links flow like text?
+    // And each link could have a color based on a hash of the url?
     return htmlResponse(
       base(
         html`
           <h1>Feed</h1>
           <ul class="feed">
-            ${feed.map((post) => renderFeedItem(post))}
+            ${feed.map((post) => displayPost(post))}
           </ul>
           `
       ).render()

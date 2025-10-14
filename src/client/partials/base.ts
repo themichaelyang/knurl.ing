@@ -22,7 +22,7 @@ export default (children: TemplateRenderable) => html`
       margin: 0 auto;
     }
 
-    .feed {
+    .feed, .activities {
       list-style-type: none;
       padding: 0;
     }
@@ -47,6 +47,12 @@ export default (children: TemplateRenderable) => html`
       flex-direction: column;
       text-align: right;
       font-size: 0.5em;
+    }
+
+    .activity {
+      border: 1px dotted grey;
+      padding: 5px;
+      margin-bottom: 5px;
     }
 
     a {
