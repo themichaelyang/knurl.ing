@@ -1,6 +1,6 @@
 import { LoginHandler } from "../../handlers/login-handler"
 import { SignUpHandler } from "../../handlers/sign-up-handler"
-import { html, type TemplateRenderable } from "../../template"
+import { html, type TemplateRenderable } from "../template"
 
 let signupAndLogin = html`<li><a href="${SignUpHandler.route}">Sign Up</a></li><li><a href="${LoginHandler.route}">Login</a></li>`
 

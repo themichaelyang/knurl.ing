@@ -1,9 +1,9 @@
 import type { BunRequest } from "bun"
 import App from "../server"
 import { htmlResponse } from "./html-response"
-import { html } from "../template"
+import { html } from "../views/template"
 import * as zod from 'zod'
-import base from "../client/partials/base"
+import base from "../views/templates/base"
 import { createSession } from "../auth/create-session"
 
 export class LoginHandler {

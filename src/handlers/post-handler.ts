@@ -4,8 +4,8 @@ import { makePost } from "../actions/make-post"
 import { validateSchema } from "./validate"
 import zod from "zod"
 import { htmlResponse } from "./html-response"
-import { html } from "../template"
-import base from "../client/partials/base"
+import { html } from "../views/template"
+import base from "../views/templates/base"
 
 export class PostHandler {
   constructor(public app: App) {}

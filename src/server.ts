@@ -131,7 +131,7 @@ const staticRoutes = [
   "/static/routed-gothic/RoutedGothicWide.woff",
   "/static/routed-gothic/RoutedGothicWide.woff2",
 ].reduce((acc, path) => {
-  acc[path] = new Response(Bun.file('./src/client' +path))
+  acc[path] = new Response(Bun.file('./src/views' +path))
   return acc
 }, {} as Record<string, Response>)
 

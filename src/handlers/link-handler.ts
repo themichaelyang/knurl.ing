@@ -1,8 +1,8 @@
 import type { BunRequest } from "bun"
 import type App from "../server"
 import { htmlResponse } from "./html-response"
-import { html } from "../template"
-import base from "../client/partials/base"
+import { html } from "../views/template"
+import base from "../views/templates/base"
 import { getLinkPosts } from "../actions/get-link-posts"
 import { displayPostMetadata } from "./index-handler"
 
