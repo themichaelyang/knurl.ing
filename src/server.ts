@@ -6,9 +6,10 @@ import * as zod from 'zod'
 import type { Config } from './config'
 import { SubmitPostRoute }from './actions/submit-post.ts'
 import { validateSchema } from './handlers/validate.ts'
-import { getOrCreateLink, getLink } from './actions/make-post.ts'
+import { getOrCreateLink, getLinkForURL } from './actions/make-post.ts'
 import { IndexRouteHandler } from "./handlers/index-route-handler"
 import { PostRouteHandler } from "./handlers/post-route-handler"
+import { LinkRouteHandler } from "./handlers/link-route-handler"
 // const sql = new SQL(LocalConfig.database.path)
 
 // Initialize database schema
@@ -23,7 +24,6 @@ function success(json: { [key: string]: PostReadable[] | PostReadable | LinkRead
 }
 
 // TODOs:
-// 1. Add posting links
 // 2. Add viewing links and everyone who posted it
 // 3. Add sign up + authentication
 // 4. Add viewing users posts
@@ -94,7 +94,7 @@ async function getAllPosts(app: App) {
 }
 
 async function getPostsWithURL(app: App, url: string) {
-  const link = await getLink(app, url)
+  const link = await getLinkForURL(app, url)
   if (!link) return success({ posts: [] })
 
   const posts = await app.postTable.fromLinkId(link.id)
@@ -106,7 +106,7 @@ async function handleGetLinkFromURL(app: App, req: BunRequest) {
   if (data instanceof Response) return data
 
   // URL.parse also does some normalization, so we must always parse it...
-  const link = await getLink(app, data.url)
+  const link = await getLinkForURL(app, data.url)
   console.log(link)
   return success({ link: link })
 }
@@ -140,10 +140,7 @@ class App {
     this.linkTable = new LinkTable(this.sql)
     this.postTable = new PostTable(this.sql)
   }
-
-  static new(config: Config) {
-    return new App(config)
-  }
+  static new = (config: Config) => new App(config)
 
   async start() {
     // Set up schema
@@ -161,20 +158,9 @@ class App {
           GET: (req) => IndexRouteHandler.new(this).handleGet(req)
         },
         "/post": (req) => PostRouteHandler.new(this).handle(req),
+        // Don't forget to update LinkRouteHandler.route if you change this
+        "/link/:id": (req) => LinkRouteHandler.new(this).handle(req, req.params.id),
         ...staticRoutes
-        // "/api/post": {
-        //   POST: (req) => CreatePostHandlerAPI.new(this).handle(req),
-        //   GET: (req) => handleFindPosts(this, req)
-        // },
-        // "/api/post/:post_id": {
-        //   GET: (req) => handleGetPost(this, req.params.post_id, req)
-        // },
-        // "/api/link": {
-        //   GET: (req) => handleGetLinkFromURL(this, req)
-        // },
-        // "/api/feed": {
-        //   GET: (req) => getFeed(this)
-        // }
       },
       error(err) {
         console.error("Server error:", err)

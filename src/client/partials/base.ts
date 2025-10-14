@@ -13,21 +13,53 @@ export default (children: TemplateRenderable) => html`
   <link rel="stylesheet" href="/static/routed-gothic/stylesheet.css">
   <!-- <link rel="stylesheet" href=""> -->
   <style>
-    @font-face {
-      font-family: "iA Writer Duo";
-      src: url("/static/fonts/iAWriterDuoS-Regular.woff2");
-    }
-
-    @font-face {
-      font-family: "iA Writer Duo";
-      font-weight: bold;
-      src: url("/static/fonts/iAWriterDuoS-Bold.woff2");
-    }
-
     body {
-      font-family: "Routed Gothic Wide";
+      font-family: "Source Serif Pro", Charter, "Times New Roman", Times, serif;
       background-color: rgb(230, 230, 230);
-      color: rgba(45, 45, 45, 0.8);
+      color: rgba(65, 65, 65, 0.8);
+      width: 90%;
+      max-width: 42em;
+      margin: 0 auto;
+    }
+
+    .feed {
+      list-style-type: none;
+      padding: 0;
+    }
+
+    .display-post {
+      display: grid;
+      /* grid-template-areas: "box"; */
+      /* display: flex; */
+      /* flex-direction: row; */
+      /* gap: 0.5em; */
+      border: 1px dotted grey;
+      padding: 5px;
+      margin-bottom: 5px;
+    }
+    .display-post > * {
+      grid-area: 1 / 1;
+    }
+    .display-post-url {}
+    .display-post-metadata {
+      place-self: end;
+      display: flex;
+      flex-direction: column;
+      text-align: right;
+      font-size: 0.5em;
+    }
+
+    a {
+      transition-duration: 0.2s;
+      color: rgb(32, 80, 203);
+    }
+
+    a:visited {
+      color: rgb(71, 24, 133);
+    }
+
+    a:hover {
+      font-weight: bold;
     }
 
     #logo {

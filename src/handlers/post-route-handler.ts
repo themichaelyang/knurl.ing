@@ -4,9 +4,7 @@ import App from "../server"
 export class PostRouteHandler {
   constructor(public app: App) {}
 
-  static new(app: App) {
-    return new this(app)
-  }
+  static new = (app: App) => new this(app)
 
   handle(req: BunRequest) {
     if (req.method == 'POST') {

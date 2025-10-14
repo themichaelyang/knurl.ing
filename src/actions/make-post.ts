@@ -6,7 +6,7 @@ type makePostData = {
   url: URL
 } & PostWritable 
 
-export async function getLink(app: App, url: string) {
+export async function getLinkForURL(app: App, url: string) {
   const normalized = utils.normalizeURLForLink(url)
   const link = await app.linkTable.fromURL(normalized)
   return link
