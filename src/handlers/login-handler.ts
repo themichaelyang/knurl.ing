@@ -6,7 +6,7 @@ import * as zod from 'zod'
 import base from "../client/partials/base"
 import { createSession } from "../auth/create-session"
 
-export class LoginRouteHandler {
+export class LoginHandler {
   constructor(public app: App) {}
 
   static new(app: App) {

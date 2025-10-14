@@ -1,7 +1,7 @@
 import type { BunRequest } from "bun"
 import App from "../server"
 
-export class LogoutRouteHandler {
+export class LogoutHandler {
   constructor(public app: App) {}
 
   static new(app: App) {

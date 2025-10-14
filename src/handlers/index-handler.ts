@@ -1,13 +1,11 @@
 import type { BunRequest } from "bun"
 import App from "../server"
-import { PostRouteHandler } from "./post-route-handler"
-import index from "../client/pages/index.html"
-import base from "../client/partials/base.ts"
-import { html } from "../template.ts"
-import { htmlResponse } from "./html-response.ts"
-import * as actions from "../actions/all.ts"
-import { LinkRouteHandler } from "./link-route-handler"
-import { isLoggedIn } from "../auth/is-logged-in.ts"
+import base from "../client/partials/base"
+import { html } from "../template"
+import { htmlResponse } from "./html-response"
+import * as actions from "../actions/all"
+import { LinkHandler } from "./link-handler"
+import { isLoggedIn } from "../auth/is-logged-in"
 
 export function displayPostMetadata(post: actions.DisplayPost) {
   return html`
@@ -25,7 +23,7 @@ export function displayPost(post: actions.DisplayPost) {
       <div class="display-post">
         <div><a class="display-post-url" href="${post.url}">${post.url}</a></div>
         <div class="display-post-metadata">
-        <div><a class="activity-href" href="${LinkRouteHandler.route(post.link_id.toString())}">(see activity)</a></div>
+        <div><a class="activity-href" href="${LinkHandler.route(post.link_id.toString())}">(see activity)</a></div>
           ${displayPostMetadata(post)}
         </div>
       </div>
@@ -33,7 +31,7 @@ export function displayPost(post: actions.DisplayPost) {
   `
 }
 
-export class IndexRouteHandler {
+export class IndexHandler {
   constructor(public app: App) {}
 
   static new(app: App) {

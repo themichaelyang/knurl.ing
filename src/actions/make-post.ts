@@ -1,4 +1,3 @@
-import type { PostWritable } from "../models/post"
 import type App from "../server"
 import * as utils from "./utils"
 

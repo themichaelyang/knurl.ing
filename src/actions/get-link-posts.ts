@@ -1,6 +1,4 @@
-import { sql } from "bun"
 import type App from "../server"
-import type { PostReadable } from "../models/post"
 import type { DisplayPost } from "./get-feed"
 
 export async function getLinkPosts(app: App, linkId: number) {

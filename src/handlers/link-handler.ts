@@ -4,9 +4,9 @@ import { htmlResponse } from "./html-response"
 import { html } from "../template"
 import base from "../client/partials/base"
 import { getLinkPosts } from "../actions/get-link-posts"
-import { displayPostMetadata } from "./index-route-handler"
+import { displayPostMetadata } from "./index-handler"
 
-export class LinkRouteHandler {
+export class LinkHandler {
   constructor(public app: App) {}
   name = "LinkRouteHandler"
 

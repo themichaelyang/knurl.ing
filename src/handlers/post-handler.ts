@@ -3,8 +3,11 @@ import App from "../server"
 import { makePost } from "../actions/make-post"
 import { validateSchema } from "./validate"
 import zod from "zod"
+import { htmlResponse } from "./html-response"
+import { html } from "../template"
+import base from "../client/partials/base"
 
-export class PostRouteHandler {
+export class PostHandler {
   constructor(public app: App) {}
 
   static new = (app: App) => new this(app)
@@ -36,6 +39,12 @@ export class PostRouteHandler {
   }
 
   handleGet(req: BunRequest) {
-    return Response.json({ message: 'Not implemented' }, { status: 400 })
+    return htmlResponse(base(html`
+    <form action="/post" method="POST">
+      <label>URL <input type="url" name="url" required /></label>
+      <label>Blurb <input type="text" name="blurb" /></label>
+      <button type="submit">Post</button>
+    </form>
+    `).render())
   }
 }

@@ -7,15 +7,15 @@ import type { Config } from './config'
 import { SubmitPostRoute }from './actions/submit-post.ts'
 import { validateSchema } from './handlers/validate.ts'
 import { getOrCreateLink, getLinkForURL } from './actions/make-post.ts'
-import { IndexRouteHandler } from "./handlers/index-route-handler"
-import { PostRouteHandler } from "./handlers/post-route-handler"
-import { SignUpRouteHandler } from "./handlers/sign-up-route-handler"
-import { LinkRouteHandler } from "./handlers/link-route-handler"
+import { IndexHandler } from "./handlers/index-handler.ts"
+import { PostHandler } from "./handlers/post-handler.ts"
+import { SignUpHandler } from "./handlers/sign-up-handler.ts"
+import { LinkHandler } from "./handlers/link-handler.ts"
 import { UserTable } from "./models/user.ts"
 import { SessionTable } from "./models/session.ts"
-import { LoginRouteHandler } from "./handlers/login-route-handler.ts"
+import { LoginHandler } from "./handlers/login-handler.ts"
 import { redirectIfLoggedIn } from "./auth/redirect-if-logged-in.ts"
-import { LogoutRouteHandler } from "./handlers/logout-route-handler.ts"
+import { LogoutHandler } from "./handlers/logout-handler.ts"
 // const sql = new SQL(LocalConfig.database.path)
 
 // Initialize database schema
@@ -164,20 +164,20 @@ class App {
     Bun.serve({
       routes: {
         "/": {
-          GET: (req) => IndexRouteHandler.new(this).handleGet(req)
+          GET: (req) => IndexHandler.new(this).handleGet(req)
         },
         "/login": {
-          GET: (req) => redirectIfLoggedIn(this, req, "/", LoginRouteHandler.new(this).handleGet),
-          POST: (req) => redirectIfLoggedIn(this, req, "/", LoginRouteHandler.new(this).handlePost)
+          GET: (req) => redirectIfLoggedIn(this, req, "/", LoginHandler.new(this).handleGet),
+          POST: (req) => redirectIfLoggedIn(this, req, "/", LoginHandler.new(this).handlePost)
         },
         "/sign-up": {
-          GET: (req) => redirectIfLoggedIn(this, req, "/", SignUpRouteHandler.new(this).handleGet),
-          POST: (req) => redirectIfLoggedIn(this, req, "/", SignUpRouteHandler.new(this).handlePost)
+          GET: (req) => redirectIfLoggedIn(this, req, "/", SignUpHandler.new(this).handleGet),
+          POST: (req) => redirectIfLoggedIn(this, req, "/", SignUpHandler.new(this).handlePost)
         },
-        "/logout": (req) => LogoutRouteHandler.new(this).handle(req),
-        "/post": (req) => PostRouteHandler.new(this).handle(req),
+        "/logout": (req) => LogoutHandler.new(this).handle(req),
+        "/post": (req) => PostHandler.new(this).handle(req),
         // Don't forget to update LinkRouteHandler.route if you change this
-        "/link/:id": (req) => LinkRouteHandler.new(this).handle(req, req.params.id),
+        "/link/:id": (req) => LinkHandler.new(this).handle(req, req.params.id),
         ...staticRoutes
       },
       error(err) {
