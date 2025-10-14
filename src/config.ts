@@ -3,7 +3,8 @@ export type Config = {
     path: string
   },
   auth: {
-    secret: string
+    secret: string,
+    domain: string // for cookies
   },
   server: {
     port: number | undefined

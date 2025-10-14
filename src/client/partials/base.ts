@@ -1,6 +1,10 @@
+import { LoginRouteHandler } from "../../handlers/login-route-handler"
+import { SignUpRouteHandler } from "../../handlers/sign-up-route-handler"
 import { html, type TemplateRenderable } from "../../template"
 
-export default (children: TemplateRenderable) => html`
+let signupAndLogin = html`<li><a href="${SignUpRouteHandler.route}">Sign Up</a></li><li><a href="${LoginRouteHandler.route}">Login</a></li>`
+
+export default (children: TemplateRenderable, loggedIn: boolean = false) => html`
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -22,7 +26,7 @@ export default (children: TemplateRenderable) => html`
       margin: 0 auto;
     }
 
-    .feed, .activities {
+    .feed, .activities, .top-nav {
       list-style-type: none;
       padding: 0;
     }
@@ -177,6 +181,11 @@ export default (children: TemplateRenderable) => html`
   <h1 id="logo">
     <a href="/"><div class="knurling-container"><div class="knurling"></div></div>knurl.ing</a>
   </h1>
+  <nav>
+    <ul class="top-nav">
+      ${loggedIn ? html`<li><a href="/logout">Logout</a></li>` : signupAndLogin}
+    </ul>
+  </nav>
   ${children}
 </body>
 </html>

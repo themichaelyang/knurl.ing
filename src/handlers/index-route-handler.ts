@@ -7,6 +7,7 @@ import { html } from "../template.ts"
 import { htmlResponse } from "./html-response.ts"
 import * as actions from "../actions/all.ts"
 import { LinkRouteHandler } from "./link-route-handler"
+import { isLoggedIn } from "../auth/is-logged-in.ts"
 
 export function displayPostMetadata(post: actions.DisplayPost) {
   return html`
@@ -40,7 +41,9 @@ export class IndexRouteHandler {
   }
 
   async handleGet(req: BunRequest) {
+    let loggedIn = await isLoggedIn(this.app, req)
     const feed = await actions.getFeed(this.app)
+    console.log(loggedIn)
 
     // TODO: Could implement this as left floating inline boxes
     // so the links flow like text?
@@ -50,9 +53,10 @@ export class IndexRouteHandler {
         html`
           <h1>Feed</h1>
           <ul class="feed">
-            ${feed.map((post) => displayPost(post))}
+            ${feed.length > 0 ? feed.map((post) => displayPost(post)) : html`<p>No posts found.</p>`}
           </ul>
-          `
+          `,
+          loggedIn
       ).render()
     )
   }

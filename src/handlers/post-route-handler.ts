@@ -1,5 +1,8 @@
 import type { BunRequest } from "bun"
 import App from "../server"
+import { makePost } from "../actions/make-post"
+import { validateSchema } from "./validate"
+import zod from "zod"
 
 export class PostRouteHandler {
   constructor(public app: App) {}
@@ -13,11 +16,23 @@ export class PostRouteHandler {
       this.handleGet(req)
     }
 
-    return Response.json({ message: 'Not implemented' }, { status: 400 })
+    return Response.json({ message: 'Not found' }, { status: 400 })
   }
 
-  handlePost(req: BunRequest) {
-    return Response.json({ message: 'Not implemented' }, { status: 400 })
+  async handlePost(req: BunRequest) {
+    const data = await validateSchema(zod.object({
+      url: zod.url(),
+      blurb: zod.string().optional(),
+      user_id: zod.number()
+    }), req)
+
+    if (data instanceof Response) return data
+
+    let url = URL.parse(data.url)
+    if (!url) return Response.json({ message: 'Invalid URL' }, { status: 400 })
+
+    const post = await makePost(this.app, { ...data, url: url })
+    return Response.json(post)
   }
 
   handleGet(req: BunRequest) {

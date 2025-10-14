@@ -6,7 +6,7 @@ export async function getFeed(app: App) {
   const feed = await app.sql`
     select p.url, p.blurb, p.link_id, u.username
     from post p
-    full outer join user u on p.user_id = u.id
+    join user u on p.user_id = u.id
     order by p.created_at desc
   `
   return feed as DisplayPost[]

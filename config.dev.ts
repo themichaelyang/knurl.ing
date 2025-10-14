@@ -1,15 +1,16 @@
 import { type Config } from "./src/config"
 
-let LocalConfig: Config = {
+let DevConfig: Config = {
   database: { 
     path: 'sqlite://dev.sqlite'
   },
   auth: {
-    secret: 'your-secret-key-change-in-production'
+    secret: 'your-secret-key-change-in-production',
+    domain: 'localhost'
   },
   server: {
     port: 2000
   }
 }
 
-export default LocalConfig
+export default DevConfig

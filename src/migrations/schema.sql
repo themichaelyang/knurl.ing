@@ -3,7 +3,7 @@ create table if not exists user (
     id integer primary key autoincrement,
     username varchar(50) unique not null,
     password_hash varchar(255) not null,
-    email varchar(255) unique not null,
+    email varchar(255) unique,
     url varchar(255),
     created_at datetime default current_timestamp,
     updated_at datetime default current_timestamp

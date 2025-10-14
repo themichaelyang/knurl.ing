@@ -9,7 +9,11 @@ import { validateSchema } from './handlers/validate.ts'
 import { getOrCreateLink, getLinkForURL } from './actions/make-post.ts'
 import { IndexRouteHandler } from "./handlers/index-route-handler"
 import { PostRouteHandler } from "./handlers/post-route-handler"
+import { SignUpRouteHandler } from "./handlers/sign-up-route-handler"
 import { LinkRouteHandler } from "./handlers/link-route-handler"
+import { UserTable } from "./models/user.ts"
+import { SessionTable } from "./models/session.ts"
+import { LoginRouteHandler } from "./handlers/login-route-handler.ts"
 // const sql = new SQL(LocalConfig.database.path)
 
 // Initialize database schema
@@ -24,7 +28,6 @@ function success(json: { [key: string]: PostReadable[] | PostReadable | LinkRead
 }
 
 // TODOs:
-// 2. Add viewing links and everyone who posted it
 // 3. Add sign up + authentication
 // 4. Add viewing users posts
 // 5. Add sessions
@@ -134,11 +137,15 @@ class App {
   sql: SQL
   linkTable: LinkTable
   postTable: PostTable
+  userTable: UserTable
+  sessionTable: SessionTable
 
   constructor(public config: Config) {
     this.sql = new SQL(this.config.database.path)
     this.linkTable = new LinkTable(this.sql)
     this.postTable = new PostTable(this.sql)
+    this.userTable = new UserTable(this.sql)
+    this.sessionTable = new SessionTable(this.sql)
   }
   static new = (config: Config) => new App(config)
 
@@ -156,6 +163,14 @@ class App {
       routes: {
         "/": {
           GET: (req) => IndexRouteHandler.new(this).handleGet(req)
+        },
+        "/login": {
+          GET: (req) => LoginRouteHandler.new(this).handleGet(req),
+          POST: (req) => LoginRouteHandler.new(this).handlePost(req)
+        },
+        "/sign-up": {
+          GET: (req) => SignUpRouteHandler.new(this).handleGet(req),
+          POST: (req) => SignUpRouteHandler.new(this).handlePost(req)
         },
         "/post": (req) => PostRouteHandler.new(this).handle(req),
         // Don't forget to update LinkRouteHandler.route if you change this

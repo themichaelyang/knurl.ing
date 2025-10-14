@@ -3,8 +3,10 @@ import type App from "../server"
 import * as utils from "./utils"
 
 type makePostData = {
-  url: URL
-} & PostWritable 
+  url: URL,
+  user_id: number,
+  blurb?: string
+}
 
 export async function getLinkForURL(app: App, url: string) {
   const normalized = utils.normalizeURLForLink(url)
