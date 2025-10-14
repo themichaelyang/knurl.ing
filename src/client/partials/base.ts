@@ -9,17 +9,19 @@ export default (children: TemplateRenderable) => html`
   <title></title>
   <meta name="description" content="">
   <!-- <link rel="stylesheet" href="stylesheets/style.css"> -->
-  <link rel="stylesheet" href="../static/routed-gothic/stylesheet.css">
+  <!-- This isn't bundled by Bun because it's in typescript, so we need to make sure the paths are right. -->
+  <link rel="stylesheet" href="/static/routed-gothic/stylesheet.css">
+  <!-- <link rel="stylesheet" href=""> -->
   <style>
     @font-face {
       font-family: "iA Writer Duo";
-      src: url("../static/fonts/iAWriterDuoS-Regular.woff2");
+      src: url("/static/fonts/iAWriterDuoS-Regular.woff2");
     }
 
     @font-face {
       font-family: "iA Writer Duo";
       font-weight: bold;
-      src: url("../static/fonts/iAWriterDuoS-Bold.woff2");
+      src: url("/static/fonts/iAWriterDuoS-Bold.woff2");
     }
 
     body {

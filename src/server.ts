@@ -1,11 +1,14 @@
 import { SQL, type BunRequest } from "bun"
 import { LinkTable, type LinkReadable } from './models/link.ts'
 import { PostTable, type PostReadable } from './models/post.ts'
-import normalizeUrl from 'normalize-url'
 import index from './client/pages/index.html'
 import * as zod from 'zod'
 import type { Config } from './config'
-import { SubmitPostRoute }from './submit-post.ts'
+import { SubmitPostRoute }from './actions/submit-post.ts'
+import { validateSchema } from './handlers/validate.ts'
+import { getOrCreateLink, getLink } from './actions/make-post.ts'
+import { IndexRouteHandler } from "./handlers/index-route-handler"
+import { PostRouteHandler } from "./handlers/post-route-handler"
 // const sql = new SQL(LocalConfig.database.path)
 
 // Initialize database schema
@@ -19,19 +22,6 @@ function success(json: { [key: string]: PostReadable[] | PostReadable | LinkRead
   return Response.json(json)
 }
 
-// https://developers.cloudflare.com/rules/normalization/how-it-works/
-// Need to normalize things like trailing slashes at root level (sometimes relevant when non root)
-// Sort query strings, etc...
-// TODO: We should also handle: https://publicsuffix.org/list/public_suffix_list.dat
-// Try to normalize as little as possible!
-function normalizeURLForLink(url: string) {
-  return URL.parse(normalizeUrl(url, {
-    removeTrailingSlash: false, // don't strip trailing slashes unless root level
-    stripWWW: false,
-    stripTextFragment: true
-  }))!
-} 
-
 // TODOs:
 // 1. Add posting links
 // 2. Add viewing links and everyone who posted it
@@ -39,50 +29,11 @@ function normalizeURLForLink(url: string) {
 // 4. Add viewing users posts
 // 5. Add sessions
 
-async function validateSchema<T>(zodSchema: zod.ZodSchema<T>, req: BunRequest): Promise<T | Response> {
-  // Untyped, but returns an Object: https://developer.mozilla.org/en-US/docs/Web/API/Request/json#return_value
-  let searchParams = URL.parse(req.url)?.searchParams
-  let body = {}
-
-  if (req.headers.get('content-type') === 'application/x-www-form-urlencoded') {
-    body = Object.fromEntries((await req.formData()).entries())
-  }
-  else if (req.headers.get('content-type') === 'application/json') {
-    let text = await req.text()
-    if (text != '') {
-      body = JSON.parse(text)
-    }
-    else if (searchParams) {
-      let searchParamsBody = Object.fromEntries(searchParams.entries())
-      if (Object.keys(searchParamsBody).length > 0) {
-        body = searchParamsBody
-      }
-    }
-  }
-  // Allow both search params in URL and JSON body
-  // `fetch()` in browser forbids data in body on GET requests
-  console.log(req.url)
-  console.log(req.method)
-  console.log(body)
-
-  // This is form data in body:
-  // if (req.headers.get('content-type') === 'application/x-www-form-urlencoded') {
-    // formData() is not deprecated: https://github.com/oven-sh/bun/issues/18701#issuecomment-2981184947
-    // let formData = await req.formData()
-    // body = Object.fromEntries(formData.entries())
-  // }
-
-  const result = zodSchema.safeParse(body)
-  if (!result.success) return Response.json({ message: 'Invalid API body' }, { status: 400 })
-
-  return result.data
-}
-
 class CreatePostHandlerAPI {
   constructor(public app: App) {}
 
   static new(app: App) {
-    return new CreatePostHandlerAPI(app)
+    return new this(app)
   }
 
   // TODO: validate user id matches logged in user
@@ -160,19 +111,6 @@ async function handleGetLinkFromURL(app: App, req: BunRequest) {
   return success({ link: link })
 }
 
-// TODO: move these into the model?
-async function getOrCreateLink(app: App, url: string) {
-  const normalized = normalizeURLForLink(url)
-  const link = await app.linkTable.getOrInsertFromURL(normalized)
-  return link
-}
-
-async function getLink(app: App, url: string) {
-  const normalized = normalizeURLForLink(url)
-  const link = await app.linkTable.fromURL(normalized)
-  return link
-}
-
 async function getFeed(app: App) {
   const feed = await app.sql`
     select p.url, p.blurb, u.username 
@@ -182,6 +120,15 @@ async function getFeed(app: App) {
   `
   return Response.json({ feed: feed })
 }
+
+const staticRoutes = [
+  "/static/routed-gothic/stylesheet.css",
+  "/static/routed-gothic/RoutedGothicWide.woff",
+  "/static/routed-gothic/RoutedGothicWide.woff2",
+].reduce((acc, path) => {
+  acc[path] = new Response(Bun.file('./src/client' +path))
+  return acc
+}, {} as Record<string, Response>)
 
 class App {
   sql: SQL
@@ -210,23 +157,24 @@ class App {
   serve(port: number) {
     Bun.serve({
       routes: {
-        "/": index,
-        "/post": (req) => SubmitPostRoute.new(this).handle(req),
-
-        "/api/post": {
-          POST: (req) => CreatePostHandlerAPI.new(this).handle(req),
-          GET: (req) => handleFindPosts(this, req)
+        "/": {
+          GET: (req) => IndexRouteHandler.new(this).handleGet(req)
         },
-        "/api/post/:post_id": {
-          GET: (req) => handleGetPost(this, req.params.post_id, req)
-        },
-        "/api/link": {
-          GET: (req) => handleGetLinkFromURL(this, req)
-        },
-
-        "/api/feed": {
-          GET: (req) => getFeed(this)
-        }
+        "/post": (req) => PostRouteHandler.new(this).handle(req),
+        ...staticRoutes
+        // "/api/post": {
+        //   POST: (req) => CreatePostHandlerAPI.new(this).handle(req),
+        //   GET: (req) => handleFindPosts(this, req)
+        // },
+        // "/api/post/:post_id": {
+        //   GET: (req) => handleGetPost(this, req.params.post_id, req)
+        // },
+        // "/api/link": {
+        //   GET: (req) => handleGetLinkFromURL(this, req)
+        // },
+        // "/api/feed": {
+        //   GET: (req) => getFeed(this)
+        // }
       },
       error(err) {
         console.error("Server error:", err)
