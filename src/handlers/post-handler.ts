@@ -6,6 +6,7 @@ import zod from "zod"
 import { htmlResponse } from "./html-response"
 import { html } from "../views/template"
 import base from "../views/templates/base"
+import { IndexView } from "./index-handler"
 
 export class PostHandler {
   constructor(public app: App) {}
@@ -30,13 +31,19 @@ export class PostHandler {
       idempotency_key: zod.string()
     }), req)
 
+    // TODO: also remember to handle these
     if (data instanceof Response) return data
 
+    // TODO: clean up the response JSONs, we need to return HTML. 
+    // One idea is to rerender the form page populated with the error.
+    // Here's a shot at that, but we probably need to have smarter form redirects, maybe with htmx?
     let url = URL.parse(data.url)
-    if (!url) return Response.json({ message: 'Invalid URL' }, { status: 400 })
+    // if (!url) return Response.json({ message: 'Invalid URL' }, { status: 400 })
+    if (!url) return htmlResponse(IndexView(false, [], 'Invalid URL').render())
 
     const post = await makePost(this.app, { ...data, url: url })
-    return Response.json(post)
+    // return Response.json(post)
+    return Response.redirect("/")
   }
 
   handleGet(req: BunRequest) {

@@ -44,6 +44,7 @@ create table if not exists link (
 );
 
 -- Append only log of shared links
+-- TODO: idea: add the # of post it was for the link so you can get a star if you posted an original link
 create table if not exists post (
     id integer primary key autoincrement,
     idempotency_key text not null unique,

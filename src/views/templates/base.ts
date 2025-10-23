@@ -1,6 +1,7 @@
 import { LoginHandler } from "../../handlers/login-handler"
 import { SignUpHandler } from "../../handlers/sign-up-handler"
-import { html, type Template, type TemplateRenderable } from "../template"
+import { html, Template, type TemplateRenderable } from "../template"
+import { readFileSync } from 'fs'
 
 let signupAndLogin = html`<li><a href="${SignUpHandler.route}">Sign Up</a></li><li><a href="${LoginHandler.route}">Login</a></li>`
 
@@ -178,9 +179,32 @@ export default function base(children: TemplateRenderable, username: string | nu
       animation-timing-function: linear;
       /* animation-timing-function: ease-in-out; */
     }
+
+    #gradient-svg {
+      display: none;
+    }
+
+    #debug-map {
+      position: absolute;
+      height: 100%;
+      display: block;
+    }
   </style>
 </head>
 <body>
+  <svg width="0" height="0" style="position: absolute;">
+    <defs>
+      <filter id="filter-bend" x="0" y="0" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+        <feImage id="map" href="" result="displacement" preserveAspectRatio="none"/>
+        <feDisplacementMap in="SourceGraphic" in2="displacement" xChannelSelector="B" yChannelSelector="G" scale="20"/>
+      </filter>
+    </defs>
+  </svg>
+  <div id="debug-map"></div>
+  <script>${new Template(readFileSync('./src/views/templates/script.ts', 'utf-8'))}</script>
+  <h1 id="logo">
+    <a href="/"><div class="knurling-container" style="filter: url(#filter-bend);"><div class="knurling"></div></div>knurl.ing</a>
+  </h1>
   <h1 id="logo">
     <a href="/"><div class="knurling-container"><div class="knurling"></div></div>knurl.ing</a>
   </h1>

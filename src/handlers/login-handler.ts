@@ -5,6 +5,7 @@ import { html } from "../views/template"
 import * as zod from 'zod'
 import base from "../views/templates/base"
 import { createSession } from "../auth/create-session"
+import { validateSchema } from "./validate"
 
 export class LoginHandler {
   constructor(public app: App) {}
@@ -32,20 +33,14 @@ export class LoginHandler {
   // Unfortunately, we need to use arrow functions to preserve "this"
   // when method is passed through the login redirect as a function
   handlePost = async (req: BunRequest) => {
-    const form = await req.formData()
-    const body = Object.fromEntries(form.entries())
-
-    const schema = zod.object({
+    const data = await validateSchema(zod.object({
       username: zod.string().min(3).max(50),
       password: zod.string().min(6).max(255)
-    })
+    }), req)
 
-    const parsed = schema.safeParse(body)
-    if (!parsed.success) {
-      return htmlResponse(html`<p>Invalid input</p>`.render())
-    }
+    if (data instanceof Response) return data
 
-    const { username, password } = parsed.data
+    const { username, password } = data
 
     console.log(this)
     let existingUser = await this.app.userTable.fromUsername(username)

@@ -6,9 +6,11 @@ import { htmlResponse } from "./html-response"
 import * as actions from "../actions/all"
 import { LinkHandler } from "./link-handler"
 import { getLoggedInUser } from "../auth/get-logged-in-user"
+import type { UserReadable } from "../models/user"
 
-let submitPostForm = (user_id: number) => html`
+let submitPostForm = (user_id: number, postErrors: string | null) => html`
   <form action="/post" method="POST">
+    ${postErrors ? html`<p>${postErrors}</p>` : ''}
     <label>URL <input type="url" name="url" required /></label>
     <label>Blurb <input type="text" name="blurb" /></label>
     <input type="hidden" name="user_id" value="${user_id}" />
@@ -41,6 +43,19 @@ export function displayPost(post: actions.DisplayPost) {
   `
 }
 
+
+export const IndexView = (loggedInUser: UserReadable | false, feed: actions.DisplayPost[], postErrors: string | null) => {
+  return base(html`
+    ${loggedInUser ? html`<h1>Post a link</h1>${submitPostForm(loggedInUser.id, postErrors)}` : ''}
+    <h1>Feed</h1>
+    <ul class="feed">
+      ${feed.length > 0 ? feed.map((post) => displayPost(post)) : html`<p>No posts found.</p>`}
+    </ul>
+    `,
+    loggedInUser ? loggedInUser.username : null
+  )
+}
+
 export class IndexHandler {
   constructor(public app: App) {}
 
@@ -57,16 +72,7 @@ export class IndexHandler {
     // so the links flow like text?
     // And each link could have a color based on a hash of the url?
     return htmlResponse(
-      base(
-        html`
-          ${loggedInUser ? html`<h1>Post a link</h1>${submitPostForm(loggedInUser.id)}` : ''}
-          <h1>Feed</h1>
-          <ul class="feed">
-            ${feed.length > 0 ? feed.map((post) => displayPost(post)) : html`<p>No posts found.</p>`}
-          </ul>
-          `,
-          loggedInUser ? loggedInUser.username : null
-      ).render()
+      IndexView(loggedInUser, feed, null).render()
     )
   }
 }

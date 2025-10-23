@@ -132,6 +132,7 @@ const staticRoutes = [
   "/static/routed-gothic/stylesheet.css",
   "/static/routed-gothic/RoutedGothicWide.woff",
   "/static/routed-gothic/RoutedGothicWide.woff2",
+  "/static/map.jpg",
 ].reduce((acc, path) => {
   acc[path] = new Response(Bun.file('./src/views' +path))
   return acc
