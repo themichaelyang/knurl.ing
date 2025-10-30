@@ -93,7 +93,8 @@ export default function base(children: TemplateRenderable, username: string | nu
       color: transparent;
       text-shadow: 0px 2px 3px rgba(255, 255, 255, 0.5);
       background-clip: text;
-      letter-spacing: 0.05em;
+      /* if bold: letter-spacing: 0.05em; */
+      letter-spacing: 0.02em;
     }
 
     :root {
@@ -176,7 +177,7 @@ export default function base(children: TemplateRenderable, username: string | nu
       transform: translate(var(--translate-x), var(--translate-y)) rotate(45deg);
     }
 
-    #logo:hover .knurling {
+    #logo a:hover .knurling {
       animation-name: rotate;
       animation-duration: 1.5s;
       animation-iteration-count: infinite;
