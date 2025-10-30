@@ -77,10 +77,17 @@ export default function base(children: TemplateRenderable, username: string | nu
     }
 
     #logo {
-      text-align: center;
+      /* text-align: center; */
+      margin: 0 auto;
+      width: fit-content;
     }
 
     #logo a {
+      margin: 1em 0;
+      /* TODO: Okay, so even display flex causes Firefox to fill in with black! I have to display: block this... */
+      display: flex;
+      /* vertical align */
+      align-items: center;
       font-size: 28px;
       text-transform: uppercase;
       font-family: "Routed Gothic Wide";
@@ -119,10 +126,10 @@ export default function base(children: TemplateRenderable, username: string | nu
     }
     .knurling-container {
       margin: 0 calc(4 * var(--triangle-height));
-      vertical-align: middle;
-      display: inline-block;
-      position: relative;
-      top: -0.1em;
+      /* Manually adjust to line up with baseline since font doesn't sit nicely in middle even when vertical-aligned */
+      margin-top: 3px;
+      /* display: inline-block causes over-edge sampling in Firefox to be black. Dunno. */
+      display: block;
 
       height: var(--container-height);
       width: var(--container-width);
@@ -200,8 +207,10 @@ export default function base(children: TemplateRenderable, username: string | nu
   <svg width="0" height="0" style="position: absolute;">
     <defs>
       <filter id="filter-bend" x="0" y="0" color-interpolation-filters="sRGB">
-        <feImage id="map" href="" result="displacement" preserveAspectRatio="none"/>
-        <feDisplacementMap in="SourceGraphic" in2="displacement" xChannelSelector="A" yChannelSelector="G" scale="20"/>
+        <feImage id="map" href="" result="displacement" />
+        <feDisplacementMap in="SourceGraphic" in2="displacement" xChannelSelector="A" yChannelSelector="G" scale="20" result="out"/>
+        <!-- Crop the filtered to source size -->
+        <feComposite in="out" in2="SourceAlpha" operator="in"/>
       </filter>
     </defs>
   </svg>
@@ -211,7 +220,7 @@ export default function base(children: TemplateRenderable, username: string | nu
     <!-- translateZ(0) fixes Safari weirdness where filter disappears when tabbing away -->
     <!-- Also, if you refresh repeatedly quickly in Safari sometimes the filter gets garbled -->
     <!-- Also, it's ever so slightly thicker in Safari?? -->
-    <a href="/"><div class="knurling-container" style="filter: url(#filter-bend); transform: translateZ(0);"><div class="knurling"></div></div>knurl.ing</a>
+    <a href="/"><div class="knurling-container" style="filter: url(#filter-bend); transform: translateZ(0);"><div class="knurling"></div></div><div>knurl.ing</div></a>
   </h1>
   <nav id="top-nav">
     ${loggedIn ? html`<li>Logged in as <a href="/user/${username}">${username}</a></li>
