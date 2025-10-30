@@ -84,6 +84,10 @@ export default function base(children: TemplateRenderable, username: string | nu
       font-size: 28px;
       text-transform: uppercase;
       font-family: "Routed Gothic Wide";
+      /* Need to disable font synthesis so text inset shadow faking works in Safari */
+      /* TODO: I kind of prefer the fake bold, so maybe switch to SVG text with read insets, if that works better in Safari */
+      font-variation-settings: "wght" 400;
+      font-synthesis: none;
       text-decoration: none;
       background-color: rgb(45, 45, 45);
       color: transparent;

@@ -1,7 +1,7 @@
 
 /// <reference lib="dom" />
 window.onload = () => {
-  let height = 28.8
+  let height = 28.8 // off by a tiny amount so sometimes there are subpixel artifacts zooming in/out?
   let width = 38.8
   // Alpha is 0.5 for x-channel. Omitting x-channel displaced x by a large fixed amount. Using R or B displaced the x nonlinearly by small amounts, 
   // maybe how the gradient is calculated?
