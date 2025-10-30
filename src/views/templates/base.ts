@@ -208,7 +208,10 @@ export default function base(children: TemplateRenderable, username: string | nu
   <div id="debug-map"></div>
   <script>${new Template(readFileSync('./src/views/templates/script.ts', 'utf-8'))}</script>
   <h1 id="logo">
-    <a href="/"><div class="knurling-container" style="filter: url(#filter-bend);"><div class="knurling"></div></div>knurl.ing</a>
+    <!-- translateZ(0) fixes Safari weirdness where filter disappears when tabbing away -->
+    <!-- Also, if you refresh repeatedly quickly in Safari sometimes the filter gets garbled -->
+    <!-- Also, it's ever so slightly thicker in Safari?? -->
+    <a href="/"><div class="knurling-container" style="filter: url(#filter-bend); transform: translateZ(0);"><div class="knurling"></div></div>knurl.ing</a>
   </h1>
   <nav id="top-nav">
     ${loggedIn ? html`<li>Logged in as <a href="/user/${username}">${username}</a></li>

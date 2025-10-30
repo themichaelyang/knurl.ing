@@ -5,6 +5,7 @@ window.onload = () => {
   let width = 38.8
   // Alpha is 0.5 for x-channel. Omitting x-channel displaced x by a large fixed amount. Using R or B displaced the x nonlinearly by small amounts, 
   // maybe how the gradient is calculated?
+  // Maybe this is the Safari issue: https://github.com/emilbjorklund/svg-weirdness/issues/22
   let svg = `<svg id="svg-displacement-gradient" filterUnits="userSpaceOnUse" width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">
     <defs>
       <linearGradient id="displacement-gradient" x1="0" x2="0" y1="0%" y2="100%" color-interpolation="sRGB">
