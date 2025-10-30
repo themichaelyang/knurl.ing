@@ -78,16 +78,17 @@ export default function base(children: TemplateRenderable, username: string | nu
 
     #logo {
       /* text-align: center; */
-      margin: 0 auto;
+      margin: 1em auto;
       width: fit-content;
     }
 
     #logo a {
+      /* Normalize line height for Chrome */
+      line-height: 1;
       margin: 1em 0;
-      /* TODO: Okay, so even display flex causes Firefox to fill in with black! I have to display: block this... */
-      display: flex;
+      /* TODO: Okay, so display: flex and display:block on the a href causes Firefox to fill in with black! I have to display: block this... */
       /* vertical align */
-      align-items: center;
+      /* align-items: center; */
       font-size: 28px;
       text-transform: uppercase;
       font-family: "Routed Gothic Wide";
@@ -105,7 +106,7 @@ export default function base(children: TemplateRenderable, username: string | nu
     }
 
     :root {
-      --square-width: 5px;
+      --square-width: 6px;
       /* Knurling triangles are right isosceles embedded in squares. */
       --triangle-height: calc(var(--square-width) / sqrt(2));
 
@@ -126,10 +127,11 @@ export default function base(children: TemplateRenderable, username: string | nu
     }
     .knurling-container {
       margin: 0 calc(4 * var(--triangle-height));
-      /* Manually adjust to line up with baseline since font doesn't sit nicely in middle even when vertical-aligned */
-      margin-top: 3px;
-      /* display: inline-block causes over-edge sampling in Firefox to be black. Dunno. */
+      /* Manually adjust to line up with baseline. Also, font doesn't sit nicely in middle even when vertical-aligned */
+      margin-top: 5px;
+      /* display: inline-block causes over-edge sampling in Firefox to be black. Dunno.*/
       display: block;
+      float: left;
 
       height: var(--container-height);
       width: var(--container-width);
@@ -214,13 +216,18 @@ export default function base(children: TemplateRenderable, username: string | nu
       </filter>
     </defs>
   </svg>
-  <div id="debug-map"></div>
+  <!-- <div id="debug-map"></div> -->
   <script>${new Template(readFileSync('./src/views/templates/script.ts', 'utf-8'))}</script>
   <h1 id="logo">
     <!-- translateZ(0) fixes Safari weirdness where filter disappears when tabbing away -->
     <!-- Also, if you refresh repeatedly quickly in Safari sometimes the filter gets garbled -->
     <!-- Also, it's ever so slightly thicker in Safari?? -->
-    <a href="/"><div class="knurling-container" style="filter: url(#filter-bend); transform: translateZ(0);"><div class="knurling"></div></div><div>knurl.ing</div></a>
+    <a href="/">
+      <div class="knurling-container" style="filter: url(#filter-bend); transform: translateZ(0);">
+        <div class="knurling"></div>
+      </div>
+      knurl.ing
+    </a>
   </h1>
   <nav id="top-nav">
     ${loggedIn ? html`<li>Logged in as <a href="/user/${username}">${username}</a></li>

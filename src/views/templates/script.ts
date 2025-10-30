@@ -1,8 +1,14 @@
 
 /// <reference lib="dom" />
 window.onload = () => {
-  let height = 28.8 // off by a tiny amount so sometimes there are subpixel artifacts zooming in/out?
-  let width = 38.8
+  // This is the size of the unfiltered knurling. If off by a tiny amount so sometimes there are subpixel artifacts zooming in/out?
+  let height = 34
+  let width = 47
+  // Why this gradient? Manual tweaking, using the x and y displacement both set to G, 
+  // trying to get the same linear offset slopes + same number of "triangle" rows displaced on top and bottom.
+  // It's not perfect. I also don't get why it isn't centered at 50%.
+  // Changing the color-interpolation to linearRGB messes things up too.
+  //
   // Alpha is 0.5 for x-channel. Omitting x-channel displaced x by a large fixed amount. Using R or B displaced the x nonlinearly by small amounts, 
   // maybe how the gradient is calculated?
   // Maybe this is the Safari issue: https://github.com/emilbjorklund/svg-weirdness/issues/22
@@ -21,8 +27,10 @@ window.onload = () => {
   const mapSvg = document.getElementById('map')
   const debugMapSvg = document.getElementById('debug-map')
   if (!mapSvg) return
-  if (!debugMapSvg) return
   mapSvg.setAttribute('href', `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`)
   // mapSvg.setAttribute('href', `#svg-displacement-gradient`)
-  debugMapSvg.innerHTML = svg
+
+  if (debugMapSvg) {
+    debugMapSvg.innerHTML = svg
+  }
 }
