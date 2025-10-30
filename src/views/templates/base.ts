@@ -196,7 +196,7 @@ export default function base(children: TemplateRenderable, username: string | nu
     <defs>
       <filter id="filter-bend" x="0" y="0" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
         <feImage id="map" href="" result="displacement" preserveAspectRatio="none"/>
-        <feDisplacementMap in="SourceGraphic" in2="displacement" xChannelSelector="B" yChannelSelector="G" scale="20"/>
+        <feDisplacementMap in="SourceGraphic" in2="displacement" xChannelSelector="A" yChannelSelector="G" scale="20"/>
       </filter>
     </defs>
   </svg>
@@ -204,9 +204,6 @@ export default function base(children: TemplateRenderable, username: string | nu
   <script>${new Template(readFileSync('./src/views/templates/script.ts', 'utf-8'))}</script>
   <h1 id="logo">
     <a href="/"><div class="knurling-container" style="filter: url(#filter-bend);"><div class="knurling"></div></div>knurl.ing</a>
-  </h1>
-  <h1 id="logo">
-    <a href="/"><div class="knurling-container"><div class="knurling"></div></div>knurl.ing</a>
   </h1>
   <nav id="top-nav">
     ${loggedIn ? html`<li>Logged in as <a href="/user/${username}">${username}</a></li>

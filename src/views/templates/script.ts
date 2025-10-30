@@ -1,21 +1,21 @@
 
 /// <reference lib="dom" />
-
 window.onload = () => {
-  let height = 28
-  let width = 39
+  let height = 28.8
+  let width = 38.8
+  // Alpha is 0.5 for x-channel. Omitting x-channel displaced x by a large fixed amount. Using R or B displaced the x nonlinearly by small amounts, 
+  // maybe how the gradient is calculated?
   let svg = `<svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">
     <defs>
-      <linearGradient id="displacementGradient" x1="0" x2="0" y1="0%" y2="100%" color-interpolation="linearRGB">
-      <stop offset="0%"   stop-color="#809880"/>  <!-- (128,152,128) -->
-      <stop offset="25%"  stop-color="#808C80"/>  <!-- (128,140,128) -->
-      <stop offset="50%"  stop-color="#807080"/>  <!-- (128,112,128) center "zoom" -->
-      <stop offset="75%"  stop-color="#808C80"/>  <!-- (128,140,128) -->
-      <stop offset="100%" stop-color="#809880"/>  <!-- (128,152,128) -->
+      <linearGradient id="displacementGradient" x1="0" x2="0" y1="0%" y2="100%" color-interpolation="sRGB">
+      <stop offset="0%"   stop-color="rgba(128,  0, 128, 0.5)"/>
+      <stop offset="20%"  stop-color="rgba(128, 128, 128, 0.5)"/>
+      <stop offset="60%"  stop-color="rgba(128, 128, 128, 0.5)"/>
+      <stop offset="100%" stop-color="rgba(128, 255, 128, 0.5)"/>
       </linearGradient>
     </defs>
 
-    <rect x="0" y="0" width="100%" height="100%" fill="url(#displacementGradient)" />
+    <rect x="0" y="0" width="${width}" height="${height}" fill="url(#displacementGradient)" />
   </svg>`
   const mapSvg = document.getElementById('map')
   const debugMapSvg = document.getElementById('debug-map')
