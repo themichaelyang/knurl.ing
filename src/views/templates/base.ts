@@ -199,7 +199,7 @@ export default function base(children: TemplateRenderable, username: string | nu
 <body>
   <svg width="0" height="0" style="position: absolute;">
     <defs>
-      <filter id="filter-bend" x="0" y="0" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <filter id="filter-bend" x="0" y="0" color-interpolation-filters="sRGB">
         <feImage id="map" href="" result="displacement" preserveAspectRatio="none"/>
         <feDisplacementMap in="SourceGraphic" in2="displacement" xChannelSelector="A" yChannelSelector="G" scale="20"/>
       </filter>
