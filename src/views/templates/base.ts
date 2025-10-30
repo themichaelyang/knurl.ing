@@ -134,7 +134,7 @@ export default function base(children: TemplateRenderable, username: string | nu
     @supports (-moz-appearance:none) {
       /* For some ungodly reason the knurling is completely off baseline if line-height: 1 in Firefox (but fine in Chrome + Safari) */
       #logo { 
-        line-height: 1.3;
+        line-height: 1.2;
       }
     }
 
