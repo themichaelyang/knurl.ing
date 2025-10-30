@@ -1,9 +1,11 @@
 
 /// <reference lib="dom" />
+// Don't forget to generateSVG = true if you are changing this script at all
+
 window.onload = () => {
   // This is the size of the unfiltered knurling. If off by a tiny amount so sometimes there are subpixel artifacts zooming in/out?
-  let height = 34
-  let width = 47
+  let height = 58
+  let width = 80
   // Why this gradient? Manual tweaking, using the x and y displacement both set to G, 
   // trying to get the same linear offset slopes + same number of "triangle" rows displaced on top and bottom.
   // It's not perfect. I also don't get why it isn't centered at 50%.

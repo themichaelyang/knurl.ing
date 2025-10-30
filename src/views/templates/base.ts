@@ -4,6 +4,7 @@ import { html, Template, type TemplateRenderable } from "../template"
 import { readFileSync } from 'fs'
 
 let signupAndLogin = html`<li><a href="${SignUpHandler.route}">Sign Up</a></li><li><a href="${LoginHandler.route}">Login</a></li>`
+let generateSvg = true
 
 export default function base(children: TemplateRenderable, username: string | null = null): Template {
   let loggedIn = username !== null
@@ -28,6 +29,7 @@ export default function base(children: TemplateRenderable, username: string | nu
       width: 90%;
       max-width: 42em;
       margin: 0 auto;
+      font-size: 24px;
     }
 
     .feed, .activities, #top-nav {
@@ -80,6 +82,7 @@ export default function base(children: TemplateRenderable, username: string | nu
       /* text-align: center; */
       margin: 1em auto;
       width: fit-content;
+      line-height: 1;
     }
 
     #logo a {
@@ -89,7 +92,7 @@ export default function base(children: TemplateRenderable, username: string | nu
       /* TODO: Okay, so display: flex and display:block on the a href causes Firefox to fill in with black! I have to display: block this... */
       /* vertical align */
       /* align-items: center; */
-      font-size: 28px;
+      font-size: var(--logo-font-size);
       text-transform: uppercase;
       font-family: "Routed Gothic Wide";
       /* Need to disable font synthesis so text inset shadow faking works in Safari */
@@ -106,7 +109,9 @@ export default function base(children: TemplateRenderable, username: string | nu
     }
 
     :root {
-      --square-width: 6px;
+      --logo-font-size: 48px;
+      /* Round number needed or Safari will jitter the animation with artifacting on the base knurling texture */
+      --square-width: round(calc(var(--logo-font-size) / 14 * 3), 1px);
       /* Knurling triangles are right isosceles embedded in squares. */
       --triangle-height: calc(var(--square-width) / sqrt(2));
 
@@ -125,10 +130,18 @@ export default function base(children: TemplateRenderable, username: string | nu
       from {margin-top: calc(var(--container-height) * -2);}
       to {margin-top: 0;}
     }
+
+    @supports (-moz-appearance:none) {
+      /* For some ungodly reason the knurling is completely off baseline if line-height: 1 in Firefox (but fine in Chrome + Safari) */
+      #logo { 
+        line-height: 1.3;
+      }
+    }
+
     .knurling-container {
       margin: 0 calc(4 * var(--triangle-height));
       /* Manually adjust to line up with baseline. Also, font doesn't sit nicely in middle even when vertical-aligned */
-      margin-top: 5px;
+      /* margin-top: -8px; */
       /* display: inline-block causes over-edge sampling in Firefox to be black. Dunno.*/
       display: block;
       float: left;
@@ -209,7 +222,7 @@ export default function base(children: TemplateRenderable, username: string | nu
   <svg width="0" height="0" style="position: absolute;">
     <defs>
       <filter id="filter-bend" x="0" y="0" color-interpolation-filters="sRGB">
-        <feImage id="map" href="" result="displacement" />
+        <feImage id="map" href="data:image/svg+xml;charset=utf-8,%3Csvg%20id%3D%22svg-displacement-gradient%22%20filterUnits%3D%22userSpaceOnUse%22%20width%3D%2247%22%20height%3D%2234%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%20%20%20%20%3Cdefs%3E%0A%20%20%20%20%20%20%3ClinearGradient%20id%3D%22displacement-gradient%22%20x1%3D%220%22%20x2%3D%220%22%20y1%3D%220%25%22%20y2%3D%22100%25%22%20color-interpolation%3D%22sRGB%22%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%220%25%22%20%20%20stop-color%3D%22rgba(128%2C%20%200%2C%20128%2C%200.5)%22%2F%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%2220%25%22%20%20stop-color%3D%22rgba(128%2C%20128%2C%20128%2C%200.5)%22%2F%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%2260%25%22%20%20stop-color%3D%22rgba(128%2C%20128%2C%20128%2C%200.5)%22%2F%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22rgba(128%2C%20255%2C%20128%2C%200.5)%22%2F%3E%0A%20%20%20%20%20%20%3C%2FlinearGradient%3E%0A%20%20%20%20%3C%2Fdefs%3E%0A%0A%20%20%20%20%3Crect%20x%3D%220%22%20y%3D%220%22%20width%3D%2247%22%20height%3D%2234%22%20fill%3D%22url(%23displacement-gradient)%22%20%2F%3E%0A%20%20%3C%2Fsvg%3E" result="displacement" />
         <feDisplacementMap in="SourceGraphic" in2="displacement" xChannelSelector="A" yChannelSelector="G" scale="20" result="out"/>
         <!-- Crop the filtered to source size -->
         <feComposite in="out" in2="SourceAlpha" operator="in"/>
@@ -217,13 +230,26 @@ export default function base(children: TemplateRenderable, username: string | nu
     </defs>
   </svg>
   <!-- <div id="debug-map"></div> -->
-  <script>${new Template(readFileSync('./src/views/templates/script.ts', 'utf-8'))}</script>
+  ${generateSvg ? new Template('<script>' + readFileSync('./src/views/templates/script.ts', 'utf-8') + '</script>') : ''}
   <h1 id="logo">
     <!-- translateZ(0) fixes Safari weirdness where filter disappears when tabbing away -->
+    <!-- Also fixes some Firefox subpixel artifacts -->
     <!-- Also, if you refresh repeatedly quickly in Safari sometimes the filter gets garbled -->
     <!-- Also, it's ever so slightly thicker in Safari?? -->
     <a href="/">
       <div class="knurling-container" style="filter: url(#filter-bend); transform: translateZ(0);">
+        <div class="knurling"></div>
+      </div>
+      knurl.ing
+    </a>
+  </h1>
+  <h1 id="logo">
+    <!-- translateZ(0) fixes Safari weirdness where filter disappears when tabbing away -->
+    <!-- Also fixes some Firefox subpixel artifacts -->
+    <!-- Also, if you refresh repeatedly quickly in Safari sometimes the filter gets garbled -->
+    <!-- Also, it's ever so slightly thicker in Safari?? -->
+    <a href="/">
+      <div class="knurling-container">
         <div class="knurling"></div>
       </div>
       knurl.ing
