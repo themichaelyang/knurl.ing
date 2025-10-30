@@ -5,6 +5,7 @@ import { readFileSync } from 'fs'
 
 let signupAndLogin = html`<li><a href="${SignUpHandler.route}">Sign Up</a></li><li><a href="${LoginHandler.route}">Login</a></li>`
 let generateSvg = false
+let bakedDisplacement = 'href=data:image/svg+xml;charset=utf-8,%3Csvg%20id%3D%22svg-displacement-gradient%22%20filterUnits%3D%22userSpaceOnUse%22%20width%3D%2280%22%20height%3D%2258%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%20%20%20%20%3Cdefs%3E%0A%20%20%20%20%20%20%3ClinearGradient%20id%3D%22displacement-gradient%22%20x1%3D%220%22%20x2%3D%220%22%20y1%3D%220%25%22%20y2%3D%22100%25%22%20color-interpolation%3D%22sRGB%22%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%220%25%22%20%20%20stop-color%3D%22rgba(128%2C%2030%2C%20128%2C%200.5)%22%2F%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%2220%25%22%20%20stop-color%3D%22rgba(128%2C%20128%2C%20128%2C%200.5)%22%2F%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%2265%25%22%20%20stop-color%3D%22rgba(128%2C%20128%2C%20128%2C%200.5)%22%2F%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22rgba(128%2C%20255%2C%20128%2C%200.5)%22%2F%3E%0A%20%20%20%20%20%20%3C%2FlinearGradient%3E%0A%20%20%20%20%3C%2Fdefs%3E%0A%0A%20%20%20%20%3Crect%20x%3D%220%22%20y%3D%220%22%20width%3D%2280%22%20height%3D%2258%22%20fill%3D%22url(%23displacement-gradient)%22%20%2F%3E%0A%20%20%3C%2Fsvg%3E'
 
 export default function base(children: TemplateRenderable, username: string | null = null): Template {
   let loggedIn = username !== null
@@ -222,7 +223,8 @@ export default function base(children: TemplateRenderable, username: string | nu
   <svg width="0" height="0" style="position: absolute;">
     <defs>
       <filter id="filter-bend" x="0" y="0" color-interpolation-filters="sRGB">
-        <feImage id="map" href="data:image/svg+xml;charset=utf-8,%3Csvg%20id%3D%22svg-displacement-gradient%22%20filterUnits%3D%22userSpaceOnUse%22%20width%3D%2280%22%20height%3D%2258%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%20%20%20%20%3Cdefs%3E%0A%20%20%20%20%20%20%3ClinearGradient%20id%3D%22displacement-gradient%22%20x1%3D%220%22%20x2%3D%220%22%20y1%3D%220%25%22%20y2%3D%22100%25%22%20color-interpolation%3D%22sRGB%22%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%220%25%22%20%20%20stop-color%3D%22rgba(128%2C%20%200%2C%20128%2C%200.5)%22%2F%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%2220%25%22%20%20stop-color%3D%22rgba(128%2C%20128%2C%20128%2C%200.5)%22%2F%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%2260%25%22%20%20stop-color%3D%22rgba(128%2C%20128%2C%20128%2C%200.5)%22%2F%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22rgba(128%2C%20255%2C%20128%2C%200.5)%22%2F%3E%0A%20%20%20%20%20%20%3C%2FlinearGradient%3E%0A%20%20%20%20%3C%2Fdefs%3E%0A%0A%20%20%20%20%3Crect%20x%3D%220%22%20y%3D%220%22%20width%3D%2280%22%20height%3D%2258%22%20fill%3D%22url(%23displacement-gradient)%22%20%2F%3E%0A%20%20%3C%2Fsvg%3E" result="displacement" />
+        <!-- If you initialize href="" then try to update the feImage you get a crazy distorted effect on Safari -->
+        <feImage id="map" ${generateSvg ? '' : bakedDisplacement} result="displacement" />
         <feDisplacementMap in="SourceGraphic" in2="displacement" xChannelSelector="A" yChannelSelector="G" scale="20" result="out"/>
         <!-- Crop the filtered to source size -->
         <feComposite in="out" in2="SourceAlpha" operator="in"/>

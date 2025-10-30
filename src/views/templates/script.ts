@@ -17,9 +17,9 @@ window.onload = () => {
   let svg = `<svg id="svg-displacement-gradient" filterUnits="userSpaceOnUse" width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">
     <defs>
       <linearGradient id="displacement-gradient" x1="0" x2="0" y1="0%" y2="100%" color-interpolation="sRGB">
-      <stop offset="0%"   stop-color="rgba(128,  0, 128, 0.5)"/>
+      <stop offset="0%"   stop-color="rgba(128, 30, 128, 0.5)"/>
       <stop offset="20%"  stop-color="rgba(128, 128, 128, 0.5)"/>
-      <stop offset="60%"  stop-color="rgba(128, 128, 128, 0.5)"/>
+      <stop offset="65%"  stop-color="rgba(128, 128, 128, 0.5)"/>
       <stop offset="100%" stop-color="rgba(128, 255, 128, 0.5)"/>
       </linearGradient>
     </defs>
